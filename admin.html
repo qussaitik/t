@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة الإدارة | عالم المصيبة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { 
+            --primary: #6c5ce7; 
+            --secondary: #00cec9; 
+            --bg: #0a0a0c; 
+            --card-bg: rgba(255, 255, 255, 0.04);
+            --danger: #ff7675; 
+            --success: #55efc4; 
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Tajawal', sans-serif; background: radial-gradient(circle at center, #1e1e2f 0%, #0a0a0c 100%); color: white; min-height: 100vh; padding: 15px; }
+
+        /* شاشة تسجيل الدخول */
+        #admin-login {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); z-index: 9999; display: none;
+            align-items: center; justify-content: center; flex-direction: column;
+            backdrop-filter: blur(20px);
+        }
+        #admin-login .login-box {
+            background: var(--card-bg); padding: 40px; border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.1); text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        #admin-login input { 
+            padding: 15px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); 
+            width: 100%; text-align: center; margin-bottom: 20px; font-size: 18px; 
+            background: rgba(255,255,255,0.05); color: white; outline: none;
+        }
+        #admin-login button { 
+            padding: 12px 50px; border-radius: 15px; border: none; 
+            background: linear-gradient(45deg, var(--primary), var(--secondary)); 
+            color: white; font-weight: 900; cursor: pointer; transition: 0.3s;
+        }
+
+        .container { max-width: 900px; margin: 20px auto; display: none; animation: fadeIn 0.6s ease; }
+        h1 { text-align: center; margin-bottom: 25px; font-weight: 900; color: var(--secondary); text-shadow: 0 0 15px rgba(0,206,201,0.3); }
+
+        /* الأزرار العلوية */
+        .top-actions { display: flex; gap: 12px; margin-bottom: 25px; }
+        .btn-refresh { 
+            flex: 1; padding: 15px; background: rgba(0, 206, 201, 0.1); border: 1px solid var(--secondary); 
+            border-radius: 18px; color: var(--secondary); font-weight: 900; cursor: pointer; transition: 0.3s;
+        }
+        .btn-refresh:hover { background: var(--secondary); color: #000; }
+        .btn-logout { padding: 15px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; color: white; cursor: pointer; font-weight: bold; }
+
+        /* التبويبات */
+        .tabs { display: flex; gap: 10px; margin-bottom: 25px; background: var(--card-bg); padding: 8px; border-radius: 22px; border: 1px solid rgba(255,255,255,0.05); }
+        .tab-btn { flex: 1; padding: 14px; border: none; border-radius: 15px; background: transparent; cursor: pointer; font-weight: 900; color: #aaa; transition: 0.4s; font-family: 'Tajawal'; }
+        .tab-btn.active { background: var(--primary); color: white; box-shadow: 0 10px 20px rgba(108, 92, 231, 0.3); }
+
+        .content-section { display: none; }
+        .content-section.active { display: block; animation: slideUp 0.4s ease; }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* الكروت */
+        .card { 
+            background: var(--card-bg); padding: 25px; border-radius: 28px; 
+            margin-bottom: 18px; border: 1px solid rgba(255,255,255,0.08); 
+            transition: 0.3s; backdrop-filter: blur(10px);
+        }
+        .card:hover { border-color: var(--primary); transform: translateY(-3px); }
+
+        .flex-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+        
+        input, select { 
+            padding: 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); 
+            font-family: 'Tajawal'; background: rgba(255,255,255,0.05); color: white; outline: none;
+        }
+        select option { background: #1e1e2f; color: white; }
+
+        .btn-action { border: none; padding: 10px 20px; border-radius: 12px; cursor: pointer; font-weight: 900; transition: 0.3s; }
+        .btn-save { background: var(--success); color: #000; }
+        .btn-del { background: rgba(255, 118, 117, 0.1); color: var(--danger); border: 1px solid var(--danger); }
+        .btn-del:hover { background: var(--danger); color: white; }
+
+        .user-info b { font-size: 18px; color: var(--secondary); }
+        .order-detail { font-size: 14px; color: #ccc; line-height: 1.8; margin: 10px 0; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div id="admin-login">
+        <div class="login-box">
+            <i class="fas fa-user-shield" style="font-size: 50px; color: var(--primary); margin-bottom: 20px;"></i>
+            <h2 style="margin-bottom: 20px; font-weight: 900;">دخول الإدارة</h2>
+            <input type="password" id="adminPass" placeholder="كلمة المرور">
+            <button onclick="checkAdmin()">دخول النظام</button>
+        </div>
+    </div>
+
+    <div class="container" id="main-content">
+        <h1>إدارة عالم المصيبة <i class="fas fa-tools"></i></h1>
+        
+        <div class="top-actions">
+            <button class="btn-refresh" onclick="loadData()"><i class="fas fa-sync-alt"></i> تحديث البيانات</button>
+            <button class="btn-logout" onclick="adminLogout()">خروج</button>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showTab('users-section', this)"><i class="fas fa-users"></i> المشتركين</button>
+            <button class="tab-btn" onclick="showTab('orders-section', this)"><i class="fas fa-shopping-cart"></i> الطلبات</button>
+        </div>
+
+        <div id="users-section" class="content-section active">
+            <div id="users-list">
+                <div style="text-align:center; padding:50px; opacity:0.5;">جاري تحميل المشتركين...</div>
+            </div>
+        </div>
+
+        <div id="orders-section" class="content-section">
+            <button onclick="clearAllOrders()" style="width: 100%; padding: 18px; background: rgba(255, 118, 117, 0.1); color: var(--danger); border: 1px solid var(--danger); border-radius: 20px; margin-bottom: 25px; cursor: pointer; font-weight: 900; transition: 0.3s;">
+                <i class="fas fa-trash-alt"></i> مسح السجل كامل
+            </button>
+            <div id="orders-list">
+                <div style="text-align:center; padding:50px; opacity:0.5;">جاري تحميل الطلبات...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const url = "https://script.google.com/macros/s/AKfycbz6aom1YkRybiFj9-N2XjRYK_HNlvo6Pa1elrjVy_MbviAlI9yljCovX5_j7X00je-r/exec";
+
+        window.onload = function() {
+            if (sessionStorage.getItem('isAdmin') === 'true') {
+                document.getElementById('main-content').style.display = 'block';
+                loadData();
+            } else {
+                document.getElementById('admin-login').style.display = 'flex';
+            }
+        };
+
+        function checkAdmin() {
+            // كلمة السر الخاصة بك بقيت كما هي
+            if (document.getElementById('adminPass').value === '0598787757') {
+                sessionStorage.setItem('isAdmin', 'true');
+                document.getElementById('admin-login').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+                loadData();
+            } else { alert("كلمة المرور خطأ يا مدير!"); }
+        }
+
+        function adminLogout() {
+            sessionStorage.removeItem('isAdmin');
+            location.reload();
+        }
+
+        function showTab(id, btn) {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        async function loadData() {
+            const refreshBtn = document.querySelector('.btn-refresh');
+            refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحديث...';
+            try {
+                // جلب المشتركين
+                const resB = await fetch(url + "?action=getBalances");
+                const users = await resB.json();
+                let uHtml = "";
+                for(let u in users) {
+                    uHtml += `<div class="card">
+                        <div class="flex-row">
+                            <div class="user-info"><b>👤 ${u}</b></div>
+                            <select onchange="updateUserDetail('${u}', 'status', this.value)" style="border-color: ${users[u].status === 'محظور' ? '#ff7675' : '#55efc4'}">
+                                <option value="نشط" ${users[u].status === 'نشط' ? 'selected' : ''}>✅ نشط</option>
+                                <option value="محظور" ${users[u].status === 'محظور' ? 'selected' : ''}>🚫 محظور</option>
+                            </select>
+                        </div>
+                        <div class="flex-row" style="margin-top:20px;">
+                            <span>💰 الرصيد: <input type="number" step="0.01" value="${users[u].balance}" id="bal_${u}" style="width:100px"></span>
+                            <span>🔑 كلمة السر: <input type="text" value="${users[u].password}" id="pass_${u}" style="width:110px"></span>
+                            <div style="display:flex; gap:8px;">
+                                <button class="btn-action btn-save" onclick="saveUserData('${u}')">حفظ</button>
+                                <button class="btn-action btn-del" onclick="deleteUser('${u}')"><i class="fas fa-user-minus"></i></button>
+                            </div>
+                        </div>
+                    </div>`;
+                }
+                document.getElementById('users-list').innerHTML = uHtml || '<div style="text-align:center; padding:20px;">لا يوجد مستخدمين</div>';
+
+                // جلب الطلبات
+                const resO = await fetch(url + "?action=getOrders");
+                const orders = await resO.json();
+                let oHtml = orders.reverse().map((o, i) => `
+                    <div class="card">
+                        <div class="flex-row">
+                            <b style="color:var(--secondary);"><i class="fas fa-box"></i> ${o.service}</b> 
+                            <small style="color:#888;">${o.date}</small>
+                        </div>
+                        <div class="order-detail">
+                            المستخدم: <b>${o.user}</b> | الكمية: <b>${o.qty}</b> | السعر: <b>${o.price}</b><br>
+                            الرابط: <a href="${o.link}" target="_blank" style="color:var(--primary); text-decoration:none;">${o.link}</a>
+                        </div>
+                        <div class="flex-row" style="margin-top:10px;">
+                            <select id="s_${i}" style="width:140px;">
+                                <option value="قيد المعالجة" ${o.status === 'قيد المعالجة' ? 'selected' : ''}>⏳ قيد المعالجة</option>
+                                <option value="مكتمل" ${o.status === 'مكتمل' ? 'selected' : ''}>✅ مكتمل</option>
+                                <option value="ملغي" ${o.status === 'ملغي' ? 'selected' : ''}>❌ ملغي</option>
+                            </select>
+                            <button class="btn-action btn-save" onclick="updateOrderStatus('${o.user}','${o.date}','s_${i}')">حفظ الحالة</button>
+                        </div>
+                    </div>
+                `).join('');
+                document.getElementById('orders-list').innerHTML = oHtml || '<div style="text-align:center; padding:20px;">لا يوجد طلبات حالياً</div>';
+            } catch(e) { console.error(e); alert("خطأ في الاتصال بالسيرفر!"); }
+            refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> تحديث البيانات';
+        }
+
+        async function saveUserData(u) {
+            const b = document.getElementById('bal_'+u).value;
+            const p = document.getElementById('pass_'+u).value;
+            await fetch(url, { method: "POST", body: JSON.stringify({ action: "updateUser", user: u, val: b, type: "balance" }) });
+            await fetch(url, { method: "POST", body: JSON.stringify({ action: "updateUser", user: u, val: p, type: "password" }) });
+            alert("تم تحديث بيانات " + u);
+        }
+
+        async function updateUserDetail(u, type, val) {
+            await fetch(url, { method: "POST", body: JSON.stringify({ action: "updateUser", user: u, val: val, type: type }) });
+            alert("تم تحديث الحالة");
+        }
+
+        async function deleteUser(u) {
+            if(!confirm("هل أنت متأكد من حذف " + u + " نهائياً؟")) return;
+            await fetch(url, { method: "POST", body: JSON.stringify({ action: "deleteUser", user: u }) });
+            loadData();
+        }
+
+        async function updateOrderStatus(u, d, id) {
+            const s = document.getElementById(id).value;
+            await fetch(url, { method: "POST", body: JSON.stringify({ action: "updateOrderStatus", user: u, date: d, status: s }) });
+            alert("تم تحديث حالة الطلب");
+        }
+
+        async function clearAllOrders() {
+            if(!confirm("⚠️ سيتم مسح جميع سجلات الطلبات نهائياً! هل أنت متأكد؟")) return;
+            await fetch(url, { method: "POST", body: JSON.stringify({ action: "clearOrders" }) });
+            loadData();
+        }
+    </script>
+</body>
+</html>

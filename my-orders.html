@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>طلباتي | عالم المصيبة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* التزام تام بالهوية البصرية */
+        :root { 
+            --primary: #6c5ce7; 
+            --secondary: #00cec9;
+            --bg: #0a0a0c; 
+            --card-bg: rgba(255, 255, 255, 0.04);
+            --success: #00b894; 
+            --danger: #d63031; 
+            --warning: #fdcb6e; 
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body { 
+            font-family: 'Tajawal', sans-serif; 
+            background: radial-gradient(circle at center, #1e1e2f 0%, #0a0a0c 100%);
+            min-height: 100vh;
+            color: white; 
+            padding: 25px 15px;
+        }
+
+        .container { max-width: 600px; margin: auto; animation: fadeIn 0.8s ease; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .header { 
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 30px; padding: 0 10px;
+        }
+        
+        .header h1 { font-weight: 900; font-size: 24px; color: var(--secondary); text-shadow: 0 0 15px rgba(0,206,201,0.2); }
+        
+        .back-btn {
+            background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+            color: white; padding: 10px 18px; border-radius: 15px; 
+            text-decoration: none; font-size: 14px; font-weight: 700; transition: 0.3s;
+        }
+        .back-btn:hover { background: var(--primary); transform: translateX(-5px); }
+
+        /* الكروت الزجاجية للطلبات */
+        .order-card { 
+            background: var(--card-bg); 
+            backdrop-filter: blur(20px);
+            padding: 22px; border-radius: 28px; 
+            margin-bottom: 18px; border: 1px solid rgba(255,255,255,0.08); 
+            transition: 0.4s; position: relative; overflow: hidden;
+        }
+        .order-card:hover { transform: scale(1.02); border-color: var(--primary); background: rgba(255,255,255,0.08); }
+
+        .order-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
+        .service-name { font-weight: 900; font-size: 17px; color: white; display: block; }
+        .order-date { font-size: 12px; color: #aaa; font-weight: 400; }
+
+        .order-info { font-size: 14px; color: #ccc; margin-bottom: 15px; display: flex; gap: 15px; }
+        .info-item b { color: var(--secondary); }
+
+        /* الأوسمة (Status Badges) */
+        .status-badge { 
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 6px 14px; border-radius: 12px; font-weight: 800; font-size: 12px; 
+        }
+        
+        .st-pending { background: rgba(253, 203, 110, 0.1); color: var(--warning); border: 1px solid rgba(253, 203, 110, 0.2); }
+        .st-completed { background: rgba(0, 184, 148, 0.1); color: var(--success); border: 1px solid rgba(0, 184, 148, 0.2); }
+        .st-cancelled { background: rgba(214, 48, 49, 0.1); color: var(--danger); border: 1px solid rgba(214, 48, 49, 0.2); }
+
+        .no-orders { 
+            text-align: center; padding: 60px 20px; 
+            background: var(--card-bg); backdrop-filter: blur(15px);
+            border-radius: 35px; border: 1px dashed rgba(255,255,255,0.1);
+            color: #aaa; font-weight: 700; 
+        }
+        
+        .loader-spinner {
+            border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid var(--secondary);
+            border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite;
+            margin: 50px auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>📦 سجل طلباتي</h1>
+        <a href="services.html" class="back-btn"><i class="fas fa-chevron-right"></i> رجوع</a>
+    </div>
+
+    <div id="orders-list">
+        <div class="loader-spinner"></div>
+    </div>
+</div>
+
+<script>
+    // الرابط الموحد والجديد
+    const url = "https://script.google.com/macros/s/AKfycbzUEWbeyHTdG2Eu96NZxxJJHWToeLsuOh6VuF-fiTeEpK9JP1mceRVra6HFP2EoiPdo/exec";
+    
+    // جلب الاسم من localStorage لضمان التوافق
+    const storedUser = localStorage.getItem('user');
+
+    async function loadOrders() {
+        if (!storedUser) {
+            document.getElementById('orders-list').innerHTML = '<div class="no-orders">⚠️ يرجى تسجيل الدخول أولاً</div>';
+            return;
+        }
+
+        try {
+            const res = await fetch(url + "?action=getOrders");
+            const data = await res.json();
+            
+            // فلترة الطلبات حسب المستخدم الحالي
+            const myOrders = data.filter(o => {
+                if (!o.user) return false;
+                return o.user.toString().trim().toLowerCase() === storedUser.trim().toLowerCase();
+            }).reverse();
+
+            if (myOrders.length === 0) {
+                document.getElementById('orders-list').innerHTML = `<div class="no-orders"><i class="fas fa-ghost" style="font-size:40px; margin-bottom:15px; display:block;"></i>لا يوجد طلبات سابقة لـ ${storedUser}</div>`;
+                return;
+            }
+
+            let html = "";
+            myOrders.forEach(o => {
+                let stClass = "st-pending";
+                let icon = "fa-clock";
+                let currentStatus = (o.status || "قيد المعالجة").trim();
+                
+                if (currentStatus === "مكتمل") { stClass = "st-completed"; icon = "fa-check-circle"; }
+                else if (currentStatus === "ملغي") { stClass = "st-cancelled"; icon = "fa-times-circle"; }
+
+                html += `
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div>
+                                <span class="service-name">${o.service}</span>
+                                <span class="order-date">${o.date ? o.date.split(' ')[0] : ''}</span>
+                            </div>
+                            <div class="status-badge ${stClass}">
+                                <i class="fas ${icon}"></i> ${currentStatus}
+                            </div>
+                        </div>
+                        <div class="order-info">
+                            <div class="info-item">الكمية: <b>${o.qty}</b></div>
+                            <div class="info-item">السعر: <b>${o.price || '0$'}</b></div>
+                        </div>
+                    </div>`;
+            });
+            document.getElementById('orders-list').innerHTML = html;
+        } catch (e) {
+            document.getElementById('orders-list').innerHTML = '<div class="no-orders">❌ فشل الاتصال بالسيرفر، جرب لاحقاً.</div>';
+        }
+    }
+    loadOrders();
+</script>
+</body>
+</html>

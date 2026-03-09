@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عالم المصيبة | تأكيد الطلب</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* الالتزام بالهوية البصرية الموحدة */
+        :root {
+            --primary: #6c5ce7;
+            --secondary: #00cec9;
+            --accent: #e84393;
+            --bg: #0a0a0c;
+            --card-bg: rgba(255, 255, 255, 0.04);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: radial-gradient(circle at center, #1e1e2f 0%, #0a0a0c 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        /* الكرت الزجاجي الكبير */
+        .order-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(25px);
+            padding: 50px 40px;
+            border-radius: 40px;
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+            animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* بادج الخدمة المختار */
+        .service-badge { 
+            background: rgba(108, 92, 231, 0.15); 
+            color: var(--secondary); 
+            padding: 10px 20px; 
+            border-radius: 15px; 
+            font-weight: 900; 
+            font-size: 15px; 
+            margin-bottom: 25px; 
+            display: inline-block;
+            border: 1px solid rgba(0, 206, 201, 0.2);
+            box-shadow: 0 0 15px rgba(0, 206, 201, 0.1);
+        }
+
+        h2 { font-weight: 900; font-size: 26px; margin-bottom: 30px; letter-spacing: 0.5px; }
+
+        .input-group { margin-bottom: 20px; position: relative; }
+        
+        input {
+            width: 100%; padding: 18px; border-radius: 20px; 
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.06); 
+            color: white; text-align: center;
+            font-family: 'Tajawal'; font-size: 16px; transition: 0.4s;
+            outline: none;
+        }
+        
+        input:focus {
+            border-color: var(--primary); 
+            background: rgba(255,255,255,0.12);
+            box-shadow: 0 0 20px rgba(108, 92, 231, 0.2);
+        }
+
+        button {
+            width: 100%; padding: 18px; border-radius: 20px; border: none;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white; font-weight: 900; font-size: 19px; cursor: pointer;
+            transition: 0.4s; margin-top: 10px;
+            box-shadow: 0 10px 25px rgba(108, 92, 231, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(108, 92, 231, 0.4);
+            filter: brightness(1.1);
+        }
+        
+        button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        .back-link { 
+            display: inline-block; margin-top: 25px; 
+            color: #aaa; text-decoration: none; 
+            font-size: 14px; transition: 0.3s;
+            font-weight: 700;
+        }
+        .back-link:hover { color: var(--secondary); }
+        .back-link i { margin-left: 5px; }
+
+    </style>
+</head>
+<body>
+
+    <div class="order-card">
+        <div id="service-name" class="service-badge">جاري جلب الخدمة...</div>
+        <h2>أكمل تفاصيل طلبك</h2>
+        
+        <div class="input-group">
+            <input type="text" id="link" placeholder="أدخل رابط الحساب أو الفيديو" autocomplete="off">
+        </div>
+        
+        <div class="input-group">
+            <input type="number" id="quantity" placeholder="الكمية المطلوبة (أرقام فقط)">
+        </div>
+
+        <button id="submit-btn" onclick="processOrder()">
+            <i class="fas fa-check-circle"></i> تأكيد وإرسال
+        </button>
+        
+        <a href="services.html" class="back-link">
+            <i class="fas fa-arrow-right"></i> العودة لقائمة الخدمات
+        </a>
+    </div>
+
+    <script>
+        // الرابط الموحد والجديد
+        const url = "https://script.google.com/macros/s/AKfycbzUEWbeyHTdG2Eu96NZxxJJHWToeLsuOh6VuF-fiTeEpK9JP1mceRVra6HFP2EoiPdo/exec";
+        const service = localStorage.getItem('chosenService');
+        const user = localStorage.getItem('user'); // استخدمنا localStorage للتوافق
+
+        if(!service) window.location.href = "services.html";
+        document.getElementById('service-name').innerText = "الخدمة: " + service;
+
+        async function processOrder() {
+            const linkValue = document.getElementById('link').value.trim();
+            const qtyValue = document.getElementById('quantity').value.trim();
+            
+            if(!linkValue || !qtyValue) {
+                return alert("يا غالي، عبي الرابط والكمية أولاً!");
+            }
+            
+            const btn = document.getElementById('submit-btn');
+            btn.disabled = true; 
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري معالجة طلبك...';
+            
+            const finalRequestURL = `${url}?action=addOrder&user=${encodeURIComponent(user)}&service=${encodeURIComponent(service)}&link=${encodeURIComponent(linkValue)}&qty=${qtyValue}`;
+
+            try {
+                const response = await fetch(finalRequestURL);
+                const result = await response.text();
+                
+                if(result === "LowBalance") {
+                    alert("⚠️ رصيدك غير كافٍ! يرجى شحن الحساب.");
+                    btn.disabled = false; 
+                    btn.innerHTML = '<i class="fas fa-check-circle"></i> تأكيد وإرسال';
+                } else if(result === "Success") {
+                    alert("✅ تم تسجيل الطلب بنجاح! سيتم تحويلك للواتساب.");
+                    window.location.href = `https://wa.me/972555630038?text=طلب جديد من عالم المصيبة:%0A👤 المستخدم: ${user}%0A🛠️ الخدمة: ${service}%0A🔢 الكمية: ${qtyValue}%0A🔗 الرابط: ${linkValue}`;
+                } else {
+                    alert("❌ حدث خطأ في النظام، حاول مرة أخرى.");
+                    btn.disabled = false; 
+                    btn.innerHTML = '<i class="fas fa-check-circle"></i> تأكيد وإرسال';
+                }
+            } catch(e) { 
+                alert("⚠️ مشكلة في الاتصال بالخادم."); 
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> تأكيد وإرسال';
+            }
+        }
+    </script>
+</body>
+</html>

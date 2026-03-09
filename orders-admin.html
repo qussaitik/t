@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة الطلبات | عالم المصيبة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { 
+            --primary: #6c5ce7; 
+            --secondary: #00cec9; 
+            --bg: #0a0a0c; 
+            --card-bg: rgba(255, 255, 255, 0.04);
+            --danger: #ff7675; 
+            --success: #55efc4; 
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: 'Tajawal', sans-serif; 
+            background: radial-gradient(circle at center, #1e1e2f 0%, #0a0a0c 100%); 
+            color: white; min-height: 100vh; padding: 15px; 
+        }
+
+        /* شاشة الدخول السرية */
+        #auth-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); z-index: 10000;
+            display: flex; align-items: center; justify-content: center; flex-direction: column;
+            backdrop-filter: blur(20px);
+        }
+        .auth-box {
+            background: var(--card-bg); padding: 40px; border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.1); text-align: center; width: 90%; max-width: 350px;
+        }
+        .auth-box input {
+            width: 100%; padding: 15px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05); color: white; text-align: center; font-size: 20px; margin-bottom: 20px; outline: none;
+        }
+        .auth-box button {
+            width: 100%; padding: 12px; border-radius: 15px; border: none;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white; font-weight: 900; cursor: pointer;
+        }
+
+        /* محتوى الصفحة الرئيسي (مخفي بالبداية) */
+        #main-content { display: none; max-width: 800px; margin: 20px auto; animation: fadeIn 0.6s ease; }
+        
+        header { text-align: center; margin-bottom: 30px; }
+        header h1 { font-weight: 900; font-size: 28px; color: var(--secondary); }
+
+        .btn-refresh { 
+            width: 100%; padding: 15px; background: rgba(0, 206, 201, 0.1); border: 1px solid var(--secondary); 
+            border-radius: 18px; color: var(--secondary); font-weight: 900; cursor: pointer; margin-bottom: 25px;
+        }
+
+        .order-card { 
+            background: var(--card-bg); padding: 25px; border-radius: 28px; 
+            margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(15px);
+        }
+
+        .flex-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+        .order-body { margin: 15px 0; padding: 15px; background: rgba(255,255,255,0.02); border-radius: 15px; font-size: 14px; color: #ccc; }
+        .order-link { color: var(--primary); text-decoration: none; word-break: break-all; }
+
+        select { 
+            padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); 
+            background: rgba(255,255,255,0.05); color: white; outline: none; width: 150px;
+        }
+        .btn-update { border: none; padding: 12px 25px; border-radius: 12px; cursor: pointer; font-weight: 900; background: var(--success); color: #000; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+<div id="auth-screen">
+    <div class="auth-box">
+        <i class="fas fa-lock" style="font-size: 40px; color: var(--primary); margin-bottom: 20px;"></i>
+        <h2 style="margin-bottom: 20px;">دخول المشرف</h2>
+        <input type="password" id="passInput" placeholder="أدخل رمز الدخول">
+        <button onclick="verifyPass()">دخول</button>
+    </div>
+</div>
+
+<div class="container" id="main-content">
+    <header>
+        <h1>📦 إدارة الطلبات</h1>
+    </header>
+
+    <button class="btn-refresh" onclick="loadOrders()">
+        <i class="fas fa-sync-alt"></i> تحديث القائمة
+    </button>
+
+    <div id="orders-list"></div>
+</div>
+
+<script>
+    const url = "https://script.google.com/macros/s/AKfycbz6aom1YkRybiFj9-N2XjRYK_HNlvo6Pa1elrjVy_MbviAlI9yljCovX5_j7X00je-r/exec";
+
+    // دالة فحص الباسوورد
+    function verifyPass() {
+        const pass = document.getElementById('passInput').value;
+        if (pass === '998877') {
+            document.getElementById('auth-screen').style.display = 'none';
+            document.getElementById('main-content').style.display = 'block';
+            loadOrders();
+        } else {
+            alert("الرمز خطأ يا غالي!");
+        }
+    }
+
+    async function loadOrders() {
+        const list = document.getElementById('orders-list');
+        list.innerHTML = '<p style="text-align:center;">جاري التحميل...</p>';
+
+        try {
+            const response = await fetch(url + "?action=getOrders");
+            const orders = await response.json();
+            const reversedOrders = orders.reverse();
+
+            let html = "";
+            reversedOrders.forEach((o, i) => {
+                html += `
+                    <div class="order-card">
+                        <div class="flex-row">
+                            <b style="font-size:18px; color:var(--secondary);">${o.service}</b>
+                            <small style="color:#777;">${o.date}</small>
+                        </div>
+                        <div class="order-body">
+                            المستخدم: <b>${o.user}</b> <br>
+                            الكمية: <b>${o.qty}</b> <br>
+                            الرابط: <a href="${o.link}" target="_blank" class="order-link">${o.link}</a>
+                        </div>
+                        <div class="flex-row">
+                            <select id="status_${i}">
+                                <option value="قيد المعالجة" ${o.status === 'قيد المعالجة' ? 'selected' : ''}>⏳ معالجة</option>
+                                <option value="مكتمل" ${o.status === 'مكتمل' ? 'selected' : ''}>✅ مكتمل</option>
+                                <option value="ملغي" ${o.status === 'ملغي' ? 'selected' : ''}>❌ ملغي</option>
+                            </select>
+                            <button class="btn-update" onclick="updateStatus('${o.user}','${o.date}','status_${i}')">حفظ</button>
+                        </div>
+                    </div>`;
+            });
+            list.innerHTML = html || '<p style="text-align:center;">لا يوجد طلبات</p>';
+        } catch (e) {
+            list.innerHTML = '<p style="text-align:center; color:red;">خطأ في الاتصال</p>';
+        }
+    }
+
+    async function updateStatus(user, date, selectId) {
+        const status = document.getElementById(selectId).value;
+        try {
+            await fetch(url, { 
+                method: "POST", 
+                body: JSON.stringify({ action: "updateOrderStatus", user: user, date: date, status: status }) 
+            });
+            alert("تم التحديث بنجاح ✅");
+        } catch (e) {
+            alert("حدث خطأ ❌");
+        }
+    }
+</script>
+</body>
+</html>
