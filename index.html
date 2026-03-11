@@ -29,24 +29,6 @@
             color: white;
         }
 
-        /* لودر البداية (العداد التنازلي) */
-        #start-loader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(26, 28, 44, 1); z-index: 10000;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            backdrop-filter: blur(25px);
-        }
-
-        .countdown-circle {
-            width: 100px; height: 100px; border-radius: 50%;
-            border: 4px solid rgba(255,255,255,0.1);
-            border-top: 4px solid var(--secondary);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 40px; font-weight: 900; color: var(--secondary);
-            margin-bottom: 20px; animation: spin 1s linear infinite;
-        }
-        @keyframes spin { 0% { border-top-color: var(--secondary); } 50% { border-top-color: var(--primary); } 100% { border-top-color: var(--secondary); } }
-
         /* لودر العمليات (عند الضغط على دخول) */
         #loader {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -84,7 +66,14 @@
             background: var(--card-bg); backdrop-filter: blur(25px);
             padding: 50px 40px; border-radius: 35px; width: 92%;
             max-width: 400px; text-align: center; border: 1px solid rgba(255,255,255,0.08);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5); display: none; /* مخفي حتى ينتهي العداد */
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            /* تمت إضافة حركة الظهور الفوري */
+            animation: fadeInUp 0.5s forwards;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         h2 { font-weight: 900; font-size: 30px; margin-bottom: 35px; letter-spacing: 1px; }
@@ -111,12 +100,6 @@
 </head>
 <body>
 
-    <div id="start-loader">
-        <div class="countdown-circle" id="timer-num">8</div>
-        <div style="font-weight: 900; font-size: 18px; letter-spacing: 1px;">جاري تحميل لوحة الدعم الخاصة بكم</div>
-        <div style="opacity: 0.6; font-size: 13px; margin-top: 10px;">يرجى الانتظار ثواني قليلة...</div>
-    </div>
-
     <div id="loader">
         <div class="dua-container">
             <p style="opacity: 0.8; font-size: 14px; margin-bottom: 10px;">جاري فتح الموقع وتحديث الرصيد..</p>
@@ -131,7 +114,7 @@
         </div>
     </div>
 
-    <div class="auth-card" id="login-box" style="display:none;">
+    <div class="auth-card" id="login-box">
         <div class="logo-icon">🔑</div>
         <h2>عالم المصيبة</h2>
         <div class="input-group">
@@ -161,26 +144,6 @@
     </div>
 
     <script>
-        // نظام العداد التنازلي عند فتح الصفحة
-        let timeLeft = 8;
-        const timerElement = document.getElementById('timer-num');
-        const startLoader = document.getElementById('start-loader');
-        const loginBox = document.getElementById('login-box');
-
-        const countdown = setInterval(() => {
-            timeLeft--;
-            timerElement.innerText = timeLeft;
-            if(timeLeft <= 0) {
-                clearInterval(countdown);
-                startLoader.style.opacity = '0';
-                setTimeout(() => {
-                    startLoader.style.display = 'none';
-                    loginBox.style.display = 'block';
-                    loginBox.style.animation = 'fadeInUp 0.8s forwards';
-                }, 500);
-            }
-        }, 1000);
-
         const url = "https://script.google.com/macros/s/AKfycbzUEWbeyHTdG2Eu96NZxxJJHWToeLsuOh6VuF-fiTeEpK9JP1mceRVra6HFP2EoiPdo/exec";
 
         function toggle(isReg) {
