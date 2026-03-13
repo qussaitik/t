@@ -3,71 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>عالم المصيبة | الخدمات</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>عالم المصيبة | الخدمات المبهجة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 
     <style>
+        /* تعريف الألوان الفرايحية والجديدة */
         :root {
-            --primary: #6c5ce7;
-            --secondary: #00cec9;
-            --accent: #e84393;
-            --bg: #1a1c2c; 
-            --card-bg: rgba(255, 255, 255, 0.06);
-            --w: #25d366; 
+            --primary: #6c5ce7; /* بنفسجي زاهي */
+            --secondary: #0984e3; /* أزرق سماوي قوي */
+            --accent: #ff7675; /* وردي ناعم */
+            --success: #00b894; /* أخضر مبهج */
+            --bg: #f9f9fc; /* خلفية بيضاء مائلة للزرقة خفيف جداً */
+            --card-bg: #ffffff; /* كروت بيضاء نقية */
+            --text-main: #2d3436; /* نص غامق واضح */
+            --text-sub: #636e72; /* نص فرعي رمادي */
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
 
         body {
-            font-family: 'Tajawal', sans-serif;
-            background: linear-gradient(135deg, #1a1c2c 0%, #4a194c 100%);
+            font-family: 'Cairo', sans-serif; /* استخدام الخط الجديد */
+            background-color: var(--bg);
+            background-image: radial-gradient(at 10% 10%, rgba(108, 92, 231, 0.05) 0px, transparent 50%),
+                              radial-gradient(at 90% 90%, rgba(255, 118, 117, 0.05) 0px, transparent 50%);
             min-height: 100vh;
-            color: white;
+            color: var(--text-main);
             padding-bottom: 40px;
             overflow-x: hidden;
         }
 
+        /* لودر فريش وبسيط */
+        #loader {
+            position: fixed; inset: 0; background: var(--bg);
+            display: flex; justify-content: center; align-items: center; z-index: 9999;
+        }
+        .spin { width: 40px; height: 40px; border: 4px solid rgba(108, 92, 231, 0.1); border-top-color: var(--primary); border-radius: 50%; animation: s 0.8s linear infinite; }
+        @keyframes s { to { transform: rotate(360deg); } }
+
+        /* ناف بار مضيئة وفخمة */
         .navbar { 
-            background: rgba(255, 255, 255, 0.03); 
+            background: rgba(255, 255, 255, 0.8); 
             backdrop-filter: blur(15px);
-            padding: 20px;
-            display: flex; flex-direction: column; gap: 15px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 15px 25px;
+            display: flex; flex-direction: column; gap: 10px;
+            border-bottom: 1px solid rgba(0,0,0,0.03);
             position: sticky; top: 0; z-index: 100;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
         }
 
         .nav-top { display: flex; justify-content: space-between; align-items: center; width: 100%; }
-        .user-tag { font-size: 14px; opacity: 0.9; }
-        .user-tag b { color: var(--secondary); font-size: 22px; display: block; font-weight: 900; }
+        .user-tag { font-size: 14px; color: var(--text-sub); }
+        .user-tag b { color: var(--primary); font-size: 20px; display: block; font-weight: 900; }
         
-        .top-btns { display: flex; gap: 10px; }
+        .top-btns { display: flex; gap: 8px; }
         .icon-btn { 
-            background: rgba(255,255,255,0.1); border: none;
-            color: white; padding: 12px; border-radius: 12px; cursor: pointer; transition: 0.3s;
+            background: rgba(108, 92, 231, 0.05); border: none;
+            color: var(--primary); padding: 10px; border-radius: 10px; cursor: pointer; transition: 0.3s;
         }
-        .icon-btn:hover { background: var(--primary); transform: scale(1.05); }
+        .icon-btn:hover { background: var(--primary); color: white; transform: scale(1.05); }
 
-        .nav-actions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%; margin-top: 5px; }
+        .nav-actions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; width: 100%; margin-top: 5px; }
 
         .action-card {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px; border-radius: 18px; text-align: center;
-            border: 1px solid rgba(255,255,255,0.1); transition: 0.3s;
-            cursor: pointer; text-decoration: none; color: white;
-            font-weight: 700; font-size: 14px;
+            background: var(--card-bg);
+            padding: 12px; border-radius: 15px; text-align: center;
+            border: 1px solid rgba(0,0,0,0.03); transition: 0.3s;
+            cursor: pointer; text-decoration: none; color: var(--text-main);
+            font-weight: 700; font-size: 13px;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.01);
         }
-        .action-card:hover { background: rgba(255,255,255,0.15); border-color: var(--secondary); }
+        .action-card:hover { background: #f0f0f5; border-color: rgba(108, 92, 231, 0.1); transform: translateY(-2px); }
+        .action-card i { font-size: 16px; }
 
         .balance-display { 
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            border: none; box-shadow: 0 8px 20px rgba(108, 92, 231, 0.3);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none; box-shadow: 0 6px 15px rgba(108, 92, 231, 0.2);
+            color: white; flex-direction: column; gap: 0;
         }
-        .balance-display span { font-size: 18px; font-weight: 900; display: block; }
+        .balance-display small { font-size: 10px; opacity: 0.8; font-weight: 400; }
+        .balance-display span { font-size: 18px; font-weight: 900; display: block; margin-top: -2px; }
 
+        /* شبكة الخدمات بحيوية أكبر */
         .services-grid { 
             display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); 
             gap: 20px; padding: 25px; max-width: 1100px; margin: auto; 
@@ -75,77 +96,90 @@
 
         .service-card { 
             background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            padding: 30px 15px; border-radius: 30px; 
+            padding: 25px 15px; border-radius: 25px; 
             text-align: center; cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid rgba(0,0,0,0.03);
             transition: 0.4s;
-            position: relative; overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.02);
         }
         
         .service-card:hover { 
-            transform: translateY(-8px);
-            border-color: var(--secondary);
-            background: rgba(255,255,255,0.1);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            transform: translateY(-5px);
+            border-color: rgba(108, 92, 231, 0.1);
+            box-shadow: 0 10px 25px rgba(108, 92, 231, 0.05);
         }
         
         .icon-circle { 
-            width: 70px; height: 70px; border-radius: 50%; 
+            width: 65px; height: 65px; border-radius: 20px; /* شكل مربع منحني أحدث */
             display: flex; align-items: center; justify-content: center; 
-            margin: 0 auto 15px; font-size: 32px;
-            transition: 0.3s;
+            margin: 0 auto 15px; font-size: 30px;
+            color: white;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
         }
 
-        .tiktok-bg { background: #000; }
+        /* ألوان أيقونات فرايحية */
+        .tiktok-bg { background: #000000; }
         .insta-bg { background: linear-gradient(45deg, #f09433, #dc2743, #bc1888); }
         .fb-bg { background: #1877F2; }
         .yt-bg { background: #FF0000; }
 
-        h3 { font-size: 16px; margin-bottom: 8px; font-weight: 700; color: #fff; }
+        h3 { font-size: 15px; margin-bottom: 8px; font-weight: 700; color: var(--text-main); }
         .price-tag { 
-            font-size: 12px; color: #fff; font-weight: 700; 
-            background: rgba(255,255,255,0.1); padding: 6px 15px; border-radius: 50px;
-            border: 1px solid rgba(255,255,255,0.1);
+            font-size: 11px; color: var(--primary); font-weight: 700; 
+            background: rgba(108, 92, 231, 0.05); padding: 5px 12px; border-radius: 50px;
+            border: 1px solid rgba(108, 92, 231, 0.1);
         }
 
+        /* توست الدعم الفرايحي */
         #support-toast {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: rgba(26, 28, 44, 0.98); backdrop-filter: blur(25px);
-            padding: 40px; border-radius: 35px; border: 1px solid var(--secondary);
-            z-index: 1000; text-align: center; width: 85%; max-width: 380px;
-            display: none; box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+            background: #ffffff;
+            padding: 30px; border-radius: 25px; border: none;
+            z-index: 1000; text-align: center; width: 85%; max-width: 360px;
+            display: none; box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+            animation: popIn 0.4s ease;
         }
+        @keyframes popIn { from { transform: translate(-50%, -40%) scale(0.9); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
+
+        #toast-icon { font-size: 50px; color: var(--success); margin-bottom: 15px; display: block; }
+        #toast-msg { color: var(--text-sub); font-size: 13px; line-height: 1.5; margin-bottom: 20px; }
 
         #whatsapp-btn {
-            display: inline-block; margin-top: 20px; background: var(--w); 
-            color: white; padding: 12px 25px; border-radius: 50px; 
-            text-decoration: none; font-weight: bold; font-size: 14px; 
-            transition: 0.3s; box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            margin: 0 auto; background: var(--success); 
+            color: white; padding: 10px 20px; border-radius: 50px; 
+            text-decoration: none; font-weight: bold; font-size: 13px; 
+            transition: 0.3s; box-shadow: 0 4px 10px rgba(0, 184, 148, 0.2);
         }
+        #whatsapp-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0, 184, 148, 0.3); }
 
-        .progress-bar { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-top: 25px; overflow: hidden; }
-        .progress-fill { width: 100%; height: 100%; background: var(--secondary); animation: progressAnim 12s linear forwards; }
+        .progress-bar { width: 100%; height: 3px; background: rgba(0,0,0,0.05); border-radius: 10px; margin-top: 20px; overflow: hidden; }
+        .progress-fill { width: 100%; height: 100%; background: var(--primary); animation: progressAnim 12s linear forwards; }
         @keyframes progressAnim { from { width: 100%; } to { width: 0%; } }
 
+        /* شاشات الكبيرة */
         @media (min-width: 768px) {
-            .navbar { flex-direction: row; justify-content: space-between; padding: 25px 8%; }
-            .nav-actions { grid-template-columns: repeat(4, auto); width: auto; }
-            .action-card { min-width: 150px; }
+            .navbar { flex-direction: row; justify-content: space-between; padding: 15px 8%; gap: 0; }
+            .nav-actions { grid-template-columns: repeat(4, auto); width: auto; gap: 8px; }
+            .action-card { min-width: 140px; font-size: 12px; padding: 10px; }
+            .balance-display { padding: 5px 15px; }
         }
     </style>
 </head>
 <body>
 
+    <div id="loader"><div class="spin"></div></div>
+
     <script>
-        // حماية الصفحة: إذا مش مسجل دخول، ارجع للرئيسية
         if(!localStorage.getItem('user')) window.location.href="index.html";
+        // إخفاء اللودر بسرعة
+        window.onload = () => { setTimeout(() => { document.getElementById('loader').style.display='none'; }, 600); };
     </script>
     
     <div id="support-toast">
-        <div id="toast-icon" style="font-size: 55px; margin-bottom: 20px;">✅</div>
-        <h2 style="font-size: 24px; font-weight: 900; margin-bottom: 10px;">تم إرسال طلبك</h2>
-        <p id="toast-msg" style="color: #ccc; font-size: 14px; line-height: 1.6;">طلبك قيد المعالجة الآن.<br>يمكنك المتابعة عبر الواتساب مباشرة.</p>
+        <i id="toast-icon" class="fas fa-check-circle"></i>
+        <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 5px; color: var(--text-main);">وصل طلبك يا غالي!</h2>
+        <p id="toast-msg">طلبك هسا صار في غرفة العمليات وجاري المعالجة.<br>تقدر تتواصل معنا مباشرة إذا مستعجل.</p>
         
         <a id="whatsapp-btn" href="#" target="_blank">
             <i class="fab fa-whatsapp"></i> تواصل عبر الواتساب
@@ -159,23 +193,23 @@
             <div class="user-tag">أهلاً بك ،<b id="u">...</b></div>
             <div class="top-btns">
                 <button class="icon-btn" onclick="location.reload()" title="تحديث"><i class="fas fa-sync-alt"></i></button>
-                <button class="icon-btn" onclick="logout()" style="background: var(--accent);" title="خروج"><i class="fas fa-power-off"></i></button>
+                <button class="icon-btn" onclick="logout()" style="background: var(--accent); color: white;" title="خروج"><i class="fas fa-power-off"></i></button>
             </div>
         </div>
         
         <div class="nav-actions">
             <div class="action-card balance-display">
-                <small style="opacity:0.9; font-size:10px;">رصيدك الحالي</small>
+                <small>رصيدك الحالي</small>
                 <span id="b">$0.0000</span>
             </div>
             <div onclick="handleAction('💰 طلب شحن رصيد', '💳')" class="action-card">
-                <i class="fas fa-wallet" style="color:var(--w); margin-bottom: 5px; display: block;"></i>شحن الرصيد
+                <i class="fas fa-wallet" style="color:var(--success);"></i>شحن رصيد
             </div>
             <div onclick="handleAction('⚠️ طلب دعم فني', '🛠️')" class="action-card">
-                <i class="fas fa-headset" style="color:var(--secondary); margin-bottom: 5px; display: block;"></i>الدعم الفني
+                <i class="fas fa-headset" style="color:var(--secondary);"></i>دعم فني
             </div>
             <a href="my-orders.html" class="action-card">
-                <i class="fas fa-history" style="color:var(--primary); margin-bottom: 5px; display: block;"></i>سجل الطلبات
+                <i class="fas fa-history" style="color:var(--primary);"></i>سجل الطلبات
             </a>
         </div>
     </div>
@@ -231,7 +265,6 @@
 
         if(user) document.getElementById('u').innerText = user;
 
-        // جلب الرصيد وتحديثه تلقائياً (Realtime)
         function watchBalance() {
             database.ref('users/' + user + '/balance').on('value', (snapshot) => {
                 const balance = snapshot.val() || 0;
@@ -239,27 +272,34 @@
             });
         }
 
-        // معالجة طلبات الشحن والدعم الفني
-        function handleAction(actionType, icon) {
+        function handleAction(actionType, iconEmoji) {
             const toast = document.getElementById('support-toast');
             const waBtn = document.getElementById('whatsapp-btn');
-            document.getElementById('toast-icon').innerText = icon;
             
-            const message = `مرحباً، لقد أرسلت طلباً جديداً من عالم المصيبة:\n- نوع الطلب: ${actionType}\n- المستخدم: ${user}`;
+            const message = `مرحباً، لقد أرسلت طلباً جديداً من عالم المصيبة ${iconEmoji}:\n- نوع الطلب: ${actionType}\n- المستخدم: ${user}`;
             waBtn.href = `https://wa.me/972555630038?text=${encodeURIComponent(message)}`;
             
-            toast.style.display = 'block';
+            const orderId = "REQ-" + Date.now();
+            const dateStr = new Date().toLocaleString('ar-EG');
 
-            // تسجيل الطلب في الفايربيز كـ إشعار للإدارة
-            const orderId = Date.now();
-            database.ref('admin_notifications/' + orderId).set({
+            const reqData = {
+                orderId: orderId,
                 user: user,
-                type: actionType,
-                time: new Date().toLocaleString(),
-                status: "قيد الانتظار"
-            });
-            
-            setTimeout(() => { toast.style.display = 'none'; }, 12000);
+                service: actionType,
+                qty: "---",
+                price: "0",
+                link: "طلب داخلي",
+                status: "⏳ قيد الانتظار",
+                date: dateStr
+            };
+
+            // تسجيل في الفايربيز
+            database.ref('orders/' + orderId).set(reqData);
+            database.ref('user_orders/' + user + '/' + orderId).set(reqData);
+
+            // إظهار التوست بحركة حلوة
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 10000);
         }
 
         function logout() {
@@ -272,7 +312,6 @@
             window.location.href = "order.html";
         }
 
-        // تشغيل المراقبة فور فتح الصفحة
         watchBalance();
     </script>
 </body>
