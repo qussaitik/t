@@ -18,6 +18,7 @@
             --white: #ffffff;
             --danger: #ff7675; 
             --text: #2d3436;
+            --gold: #f1c40f;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
@@ -29,7 +30,7 @@
             line-height: 1.6;
         }
 
-        /* شاشة الدخول الفخمة */
+        /* شاشة الدخول */
         #admin-login {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg); z-index: 10000; display: flex;
@@ -37,65 +38,52 @@
         }
         .login-box {
             background: var(--white); padding: 50px 40px; border-radius: 40px;
-            text-align: center;
-            width: 90%; max-width: 400px; 
+            text-align: center; width: 90%; max-width: 400px; 
             box-shadow: 0 25px 50px rgba(108, 92, 231, 0.1);
         }
         .login-box i { font-size: 50px; color: var(--primary); margin-bottom: 20px; }
-        .login-box h2 { font-weight: 900; margin-bottom: 25px; color: var(--text); }
+        .login-box h2 { font-weight: 900; margin-bottom: 25px; }
         .login-box input { 
             width: 100%; padding: 18px; border-radius: 20px; border: 2px solid #f1f1f1;
-            background: #fafafa; color: var(--text); text-align: center; font-size: 18px; margin-bottom: 20px;
-            transition: 0.3s;
+            background: #fafafa; text-align: center; font-size: 18px; margin-bottom: 20px;
         }
-        .login-box input:focus { border-color: var(--primary); background: var(--white); }
         .btn-login { 
             width: 100%; padding: 18px; border-radius: 20px; border: none;
             background: linear-gradient(135deg, var(--primary), #a29bfe); color: white; font-weight: 900; cursor: pointer;
-            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.2);
         }
 
         .container { max-width: 900px; margin: 0 auto; display: none; animation: fadeIn 0.5s ease; }
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding-bottom: 15px; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         header h1 { font-weight: 900; color: var(--primary); font-size: 26px; }
 
-        .tabs { display: flex; gap: 10px; margin-bottom: 25px; background: #eeefff; padding: 7px; border-radius: 20px; }
-        .tab-btn { flex: 1; padding: 14px; border: none; border-radius: 15px; background: transparent; color: #7f8c8d; cursor: pointer; font-weight: bold; font-family: 'Tajawal'; transition: 0.3s; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 25px; background: #eeefff; padding: 7px; border-radius: 20px; overflow-x: auto; }
+        .tab-btn { flex: 1; padding: 14px; border: none; border-radius: 15px; background: transparent; color: #7f8c8d; cursor: pointer; font-weight: bold; font-family: 'Tajawal'; white-space: nowrap; }
         .tab-btn.active { background: var(--white); color: var(--primary); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
 
         .content-section { display: none; }
         .content-section.active { display: block; }
 
-        /* الكروت المحسنة */
         .card { 
             background: var(--white); padding: 25px; border-radius: 30px; 
-            margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.8); 
-            box-shadow: 0 10px 25px rgba(108, 92, 231, 0.05);
-            transition: 0.3s;
+            margin-bottom: 20px; box-shadow: 0 10px 25px rgba(108, 92, 231, 0.05);
         }
-        .card:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(108, 92, 231, 0.1); }
 
         .flex-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .user-tag { background: #f0eeff; padding: 8px 15px; border-radius: 12px; font-weight: 900; color: var(--primary); display: flex; align-items: center; gap: 8px; }
         
-        .user-tag { background: #f0eeff; padding: 8px 15px; border-radius: 12px; font-weight: 900; color: var(--primary); }
-        
+        /* نقطة الأونلاين */
+        .status-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+        .online { background-color: var(--secondary); box-shadow: 0 0 10px var(--secondary); }
+        .offline { background-color: #b2bec3; }
+
         .controls { display: flex; gap: 12px; align-items: center; margin-top: 20px; padding-top: 15px; border-top: 1px solid #f1f1f1; }
-        
-        input[type="number"], input[type="text"], select { 
-            background: #fafafa; border: 2px solid #f1f1f1; color: var(--text); 
-            padding: 10px 15px; border-radius: 12px; font-family: 'Tajawal'; font-weight: 600;
-            transition: 0.3s;
-        }
-        input:focus, select:focus { border-color: var(--primary); background: var(--white); }
+        input[type="number"], input[type="text"], select { background: #fafafa; border: 2px solid #f1f1f1; padding: 10px 15px; border-radius: 12px; font-family: 'Tajawal'; }
 
-        .btn { border: none; padding: 10px 20px; border-radius: 12px; cursor: pointer; font-weight: bold; font-family: 'Tajawal'; transition: 0.2s; }
-        .btn-save { background: var(--secondary); color: white; box-shadow: 0 5px 15px rgba(0, 184, 148, 0.2); }
-        .btn-del { background: #fff1f0; color: var(--danger); border: 1px solid rgba(255, 118, 117, 0.2); }
-        .btn-del:hover { background: var(--danger); color: white; }
-        .btn-logout { background: var(--white); color: var(--danger); border: 1px solid #ffeaea; font-size: 13px; font-weight: 800; }
+        .btn { border: none; padding: 10px 20px; border-radius: 12px; cursor: pointer; font-weight: bold; font-family: 'Tajawal'; }
+        .btn-save { background: var(--secondary); color: white; }
+        .btn-del { background: #fff1f0; color: var(--danger); }
+        .btn-logout { background: var(--white); color: var(--danger); border: 1px solid #ffeaea; }
 
-        .order-info { font-size: 14px; color: #636e72; margin: 15px 0; background: #f9f9fc; padding: 15px; border-radius: 15px; border-right: 4px solid var(--primary); }
-        
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
@@ -113,16 +101,30 @@
 <div class="container" id="main-content">
     <header>
         <h1>🔐 لوحة التحكم</h1>
-        <button class="btn btn-logout" onclick="adminLogout()">تسجيل خروج <i class="fas fa-sign-out-alt"></i></button>
+        <button class="btn btn-logout" onclick="adminLogout()">خروج <i class="fas fa-sign-out-alt"></i></button>
     </header>
 
     <div class="tabs">
-        <button class="tab-btn active" onclick="showTab('users-tab', this)"><i class="fas fa-users"></i> المشتركين</button>
+        <button class="tab-btn active" onclick="showTab('users-tab', this)"><i class="fas fa-users"></i> الرادار والمشتركين</button>
+        <button class="tab-btn" onclick="showTab('ticker-tab', this)"><i class="fas fa-bullhorn"></i> الشريط المتحرك</button>
         <button class="tab-btn" onclick="showTab('orders-tab', this)"><i class="fas fa-shopping-basket"></i> الطلبات</button>
     </div>
 
     <div id="users-tab" class="content-section active">
         <div id="users-list"></div>
+    </div>
+
+    <div id="ticker-tab" class="content-section">
+        <div class="card">
+            <h3 style="margin-bottom: 20px; color: var(--primary);">📢 إدارة شريط الإهداءات</h3>
+            <label>نص الشريط الحالي:</label>
+            <input type="text" id="ticker-text-input" style="width: 100%; margin: 10px 0 20px; padding: 15px;" placeholder="اكتب النص هنا...">
+            
+            <label>سرعة الحركة (ثواني - أقل يعني أسرع):</label>
+            <input type="number" id="ticker-speed-input" style="width: 100%; margin: 10px 0 20px; padding: 15px;" placeholder="مثال: 20">
+            
+            <button class="btn btn-save" style="width: 100%; padding: 15px;" onclick="saveTickerSettings()">تحديث الشريط فوراً 🔥</button>
+        </div>
     </div>
 
     <div id="orders-tab" class="content-section">
@@ -154,6 +156,7 @@
             document.getElementById('admin-login').style.display = 'none';
             document.getElementById('main-content').style.display = 'block';
             startLiveUpdate();
+            loadTickerData(); // تحميل بيانات الشريط عند الدخول
         } else { alert("الرمز غلط يا غالي"); }
     }
 
@@ -166,48 +169,57 @@
         btn.classList.add('active');
     }
 
+    // جلب بيانات الأونلاين (الرادار) دمجاً مع بيانات اليوزرز
     function startLiveUpdate() {
-        db.ref('users').on('value', (snap) => {
-            const users = snap.val();
-            let html = "";
-            for(let u in users) {
-                const isBanned = users[u].status === 'محظور';
-                html += `
-                <div class="card">
-                    <div class="flex-row">
-                        <span class="user-tag">👤 ${u}</span>
-                        <select onchange="updateUserField('${u}', 'status', this.value)" style="border-color: ${isBanned ? 'var(--danger)' : 'var(--secondary)'}">
-                            <option value="نشط" ${!isBanned ? 'selected' : ''}>✅ نشط</option>
-                            <option value="محظور" ${isBanned ? 'selected' : ''}>🚫 حظر</option>
-                        </select>
-                    </div>
-                    <div class="controls flex-row">
-                        <span>💰 رصيد ($): <input type="number" id="bal_${u}" value="${users[u].balance}" style="width:100px"></span>
-                        <span>🔑 سر: <input type="text" id="pass_${u}" value="${users[u].password}" style="width:120px"></span>
-                        <div style="display:flex; gap:8px">
-                            <button class="btn btn-save" onclick="saveUserData('${u}')">حفظ</button>
-                            <button class="btn btn-del" onclick="deleteAccount('${u}')"><i class="fas fa-trash"></i></button>
+        db.ref('users').on('value', (userSnap) => {
+            db.ref('status').on('value', (statusSnap) => {
+                const users = userSnap.val();
+                const statuses = statusSnap.val() || {};
+                let html = "";
+                
+                for(let u in users) {
+                    const isBanned = users[u].status === 'محظور';
+                    const userStatus = statuses[u] ? statuses[u].state : 'offline';
+                    const statusClass = userStatus === 'online' ? 'online' : 'offline';
+                    
+                    html += `
+                    <div class="card">
+                        <div class="flex-row">
+                            <span class="user-tag">
+                                <span class="status-dot ${statusClass}"></span>
+                                👤 ${u} 
+                                <small style="font-size:10px; color:#aaa;">(${userStatus})</small>
+                            </span>
+                            <select onchange="updateUserField('${u}', 'status', this.value)" style="border-color: ${isBanned ? 'var(--danger)' : 'var(--secondary)'}">
+                                <option value="نشط" ${!isBanned ? 'selected' : ''}>✅ نشط</option>
+                                <option value="محظور" ${isBanned ? 'selected' : ''}>🚫 حظر</option>
+                            </select>
                         </div>
-                    </div>
-                </div>`;
-            }
-            document.getElementById('users-list').innerHTML = html;
+                        <div class="controls flex-row">
+                            <span>💰 رصيد: <input type="number" id="bal_${u}" value="${users[u].balance}" style="width:80px"></span>
+                            <span>🔑 سر: <input type="text" id="pass_${u}" value="${users[u].password}" style="width:100px"></span>
+                            <div style="display:flex; gap:8px">
+                                <button class="btn btn-save" onclick="saveUserData('${u}')">حفظ</button>
+                                <button class="btn btn-del" onclick="deleteAccount('${u}')"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    </div>`;
+                }
+                document.getElementById('users-list').innerHTML = html;
+            });
         });
 
+        // استماع للطلبات (نفس كودك القديم)
         db.ref('orders').on('value', (snap) => {
             const orders = snap.val();
-            if(!orders) { document.getElementById('orders-list').innerHTML = `<div class="no-orders" style="text-align:center; padding:40px; color:#aaa;">لا يوجد طلبات حالياً</div>`; return; }
+            if(!orders) { document.getElementById('orders-list').innerHTML = `<div style="text-align:center; padding:40px; color:#aaa;">لا يوجد طلبات</div>`; return; }
             const arr = Object.values(orders).reverse();
             let html = arr.map(o => `
                 <div class="card">
-                    <div class="flex-row">
-                        <b style="color:var(--primary); font-size:18px;">${o.service}</b>
-                        <small style="color:#b2bec3;">${o.date}</small>
-                    </div>
-                    <div class="order-info">
-                        <strong>المستخدم:</strong> ${o.user} <br>
-                        <strong>الكمية:</strong> ${o.qty} <br>
-                        <strong>الرابط:</strong> <a href="${o.link}" target="_blank" style="color:var(--primary); font-weight:700;">فتح الرابط <i class="fas fa-external-link-alt"></i></a>
+                    <div class="flex-row"><b>${o.service}</b> <small>${o.date}</small></div>
+                    <div style="font-size:14px; margin:10px 0; background:#f9f9fc; padding:10px; border-radius:10px;">
+                        يوزر: ${o.user} | كمية: ${o.qty} <br>
+                        رابط: <a href="${o.link}" target="_blank">فتح الرابط</a>
                     </div>
                     <div class="flex-row">
                         <select id="st_${o.orderId}" style="flex:1">
@@ -215,7 +227,7 @@
                             <option value="مكتمل" ${o.status === 'مكتمل' ? 'selected' : ''}>✅ مكتمل</option>
                             <option value="ملغي" ${o.status === 'ملغي' ? 'selected' : ''}>❌ ملغي</option>
                         </select>
-                        <button class="btn btn-save" onclick="updateOrderStatus('${o.user}', '${o.orderId}')">تحديث الحالة</button>
+                        <button class="btn btn-save" onclick="updateOrderStatus('${o.user}', '${o.orderId}')">تحديث</button>
                     </div>
                 </div>
             `).join('');
@@ -223,36 +235,40 @@
         });
     }
 
+    // إدارة الشريط المتحرك
+    function loadTickerData() {
+        db.ref('settings/ticker').once('value').then(snap => {
+            if(snap.exists()) {
+                document.getElementById('ticker-text-input').value = snap.val().text;
+                document.getElementById('ticker-speed-input').value = snap.val().speed;
+            }
+        });
+    }
+
+    function saveTickerSettings() {
+        const t = document.getElementById('ticker-text-input').value;
+        const s = document.getElementById('ticker-speed-input').value;
+        if(t && s) {
+            db.ref('settings/ticker').set({ text: t, speed: s })
+            .then(() => alert("✅ تم تحديث الشريط بنجاح!"));
+        } else { alert("عبّي البيانات يا قصي!"); }
+    }
+
+    // الدوال المساعدة (نفس كودك الأصلي)
     function saveUserData(u) {
         const b = parseFloat(document.getElementById('bal_'+u).value);
         const p = document.getElementById('pass_'+u).value;
-        db.ref('users/' + u).update({ balance: b, password: p }).then(() => alert("تم حفظ بيانات " + u));
+        db.ref('users/' + u).update({ balance: b, password: p }).then(() => alert("تم حفظ " + u));
     }
-
-    function updateUserField(u, field, val) {
-        db.ref('users/' + u).update({ [field]: val });
-    }
-
-    function deleteAccount(u) {
-        if(confirm("بدك تمسح حساب " + u + " نهائياً؟")) {
-            db.ref('users/' + u).remove();
-        }
-    }
-
+    function updateUserField(u, field, val) { db.ref('users/' + u).update({ [field]: val }); }
+    function deleteAccount(u) { if(confirm("أكيد بدك تمسح " + u + "؟")) db.ref('users/' + u).remove(); }
     function updateOrderStatus(u, id) {
         const s = document.getElementById('st_' + id).value;
-        const updates = {};
-        updates['/orders/' + id + '/status'] = s;
-        updates['/user_orders/' + u + '/' + id + '/status'] = s;
-        db.ref().update(updates).then(() => alert("تم التحديث بنجاح"));
+        db.ref('orders/' + id).update({status: s});
+        db.ref('user_orders/' + u + '/' + id).update({status: s});
+        alert("تم تحديث حالة الطلب");
     }
-
-    function clearOrders() {
-        if(confirm("سيتم حذف جميع سجلات الطلبات! هل أنت متأكد؟")) {
-            db.ref('orders').remove();
-            db.ref('user_orders').remove();
-        }
-    }
+    function clearOrders() { if(confirm("مسح كل السجل؟")) { db.ref('orders').remove(); db.ref('user_orders').remove(); } }
 </script>
 </body>
 </html>
