@@ -33,7 +33,6 @@
             color: white;
         }
 
-        /* لودر الدعاء الفخم */
         #loader {
             display: none; position: fixed; inset: 0;
             background: rgba(15, 12, 41, 0.98); z-index: 10000;
@@ -41,7 +40,6 @@
             backdrop-filter: blur(15px);
         }
 
-        /* لوجو عالم المصيبة */
         .main-logo {
             text-align: center; margin-bottom: 40px;
             animation: glow 2s ease-in-out infinite alternate;
@@ -54,7 +52,6 @@
             text-shadow: 0 10px 30px rgba(108, 92, 231, 0.5);
         }
 
-        /* حاوية الخيارات */
         .portal-container {
             display: flex; flex-direction: column; gap: 15px;
             width: 100%; max-width: 400px;
@@ -90,7 +87,6 @@
         .card-text h3 { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
         .card-text p { font-size: 12px; opacity: 0.7; }
 
-        /* شاشة الدخول العادية */
         .auth-card {
             background: var(--white); color: #333;
             padding: 40px 30px; border-radius: 35px; width: 100%;
@@ -198,7 +194,6 @@
     </div>
 
     <script>
-        // إعدادات الفايربيز
         const firebaseConfig = {
             apiKey: "AIzaSyDH4h6Dg1DM9xGLc8x7mUaqnVICBf6HnNk",
             authDomain: "al-musaiba.firebaseapp.com",
@@ -211,7 +206,6 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // دوال التنقل
         function openLogin() {
             document.getElementById('portal-view').style.display = 'none';
             document.getElementById('login-view').style.display = 'block';
@@ -226,7 +220,6 @@
             document.getElementById('portal-view').style.display = 'block';
         }
 
-        // منطق تسجيل الدخول
         function executeLogin() {
             const u = document.getElementById('user').value.trim().toLowerCase();
             const p = document.getElementById('pass').value.trim();
@@ -240,6 +233,18 @@
                         alert("⚠️ حسابك محظور!");
                         location.reload();
                     } else {
+                        // --- نظام الرادار اللحظي ---
+                        const presenceRef = database.ref('status/' + u);
+                        presenceRef.set({
+                            state: 'online',
+                            last_changed: firebase.database.ServerValue.TIMESTAMP
+                        });
+                        presenceRef.onDisconnect().set({
+                            state: 'offline',
+                            last_changed: firebase.database.ServerValue.TIMESTAMP
+                        });
+                        // ------------------------
+
                         localStorage.setItem('user', u);
                         window.location.href = "services.html";
                     }
@@ -275,5 +280,3 @@
     </script>
 </body>
 </html>
-
-
