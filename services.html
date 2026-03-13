@@ -29,7 +29,7 @@
             overflow-x: hidden;
         }
 
-        /* شريط الإهداء - سرعة هادئة ومن اليسار لليمين */
+        /* شريط الإهداء - تعديل البدء الفوري والسرعة */
         .ticker-wrapper {
             background: rgba(0, 0, 0, 0.6);
             border-bottom: 1px solid var(--gold);
@@ -39,12 +39,12 @@
         }
         .ticker-text {
             display: inline-block;
-            animation: scroll-left-to-right 40s linear infinite; /* تم تبطيء السرعة لـ 40 ثانية */
+            animation: scroll-left-to-right 20s linear infinite; /* سرعة متوسطة وفخمة */
             color: var(--gold);
             font-weight: 700;
             font-size: 16px;
             text-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
-            padding-right: 100%; 
+            padding-left: 20px; /* مسافة بسيطة للبداية */
         }
         @keyframes scroll-left-to-right {
             0% { transform: translateX(-100%); }
