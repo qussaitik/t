@@ -71,7 +71,6 @@
         .flex-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
         .user-tag { background: #f0eeff; padding: 8px 15px; border-radius: 12px; font-weight: 900; color: var(--primary); display: flex; align-items: center; gap: 8px; }
         
-        /* نقطة الأونلاين */
         .status-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
         .online { background-color: var(--secondary); box-shadow: 0 0 10px var(--secondary); }
         .offline { background-color: #b2bec3; }
@@ -83,6 +82,12 @@
         .btn-save { background: var(--secondary); color: white; }
         .btn-del { background: #fff1f0; color: var(--danger); }
         .btn-logout { background: var(--white); color: var(--danger); border: 1px solid #ffeaea; }
+
+        /* سجل الدخول */
+        .log-item { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; }
+        .log-item:last-child { border-bottom: none; }
+        .log-user { font-weight: bold; color: var(--primary); }
+        .log-time { color: #888; font-size: 12px; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -105,8 +110,9 @@
     </header>
 
     <div class="tabs">
-        <button class="tab-btn active" onclick="showTab('users-tab', this)"><i class="fas fa-users"></i> الرادار والمشتركين</button>
-        <button class="tab-btn" onclick="showTab('ticker-tab', this)"><i class="fas fa-bullhorn"></i> الشريط المتحرك</button>
+        <button class="tab-btn active" onclick="showTab('users-tab', this)"><i class="fas fa-users"></i> الرادار</button>
+        <button class="tab-btn" onclick="showTab('logs-tab', this)"><i class="fas fa-history"></i> سجل دخول 24س</button>
+        <button class="tab-btn" onclick="showTab('ticker-tab', this)"><i class="fas fa-bullhorn"></i> الشريط</button>
         <button class="tab-btn" onclick="showTab('orders-tab', this)"><i class="fas fa-shopping-basket"></i> الطلبات</button>
     </div>
 
@@ -114,15 +120,24 @@
         <div id="users-list"></div>
     </div>
 
+    <div id="logs-tab" class="content-section">
+        <div class="card">
+            <div class="flex-row" style="margin-bottom: 20px;">
+                <h3 style="color: var(--primary);">🕒 سجل دخول آخر 24 ساعة</h3>
+                <button class="btn btn-del" onclick="clearLoginLogs()">مسح السجل</button>
+            </div>
+            <div id="login-logs-list">
+                </div>
+        </div>
+    </div>
+
     <div id="ticker-tab" class="content-section">
         <div class="card">
             <h3 style="margin-bottom: 20px; color: var(--primary);">📢 إدارة شريط الإهداءات</h3>
             <label>نص الشريط الحالي:</label>
             <input type="text" id="ticker-text-input" style="width: 100%; margin: 10px 0 20px; padding: 15px;" placeholder="اكتب النص هنا...">
-            
-            <label>سرعة الحركة (ثواني - أقل يعني أسرع):</label>
-            <input type="number" id="ticker-speed-input" style="width: 100%; margin: 10px 0 20px; padding: 15px;" placeholder="مثال: 20">
-            
+            <label>سرعة الحركة (ثواني):</label>
+            <input type="number" id="ticker-speed-input" style="width: 100%; margin: 10px 0 20px; padding: 15px;">
             <button class="btn btn-save" style="width: 100%; padding: 15px;" onclick="saveTickerSettings()">تحديث الشريط فوراً 🔥</button>
         </div>
     </div>
@@ -156,7 +171,9 @@
             document.getElementById('admin-login').style.display = 'none';
             document.getElementById('main-content').style.display = 'block';
             startLiveUpdate();
-            loadTickerData(); // تحميل بيانات الشريط عند الدخول
+            loadTickerData();
+            cleanOldLogs(); // مسح تلقائي للقديم عند الدخول
+            listenToLogs(); // مراقبة سجل الدخول
         } else { alert("الرمز غلط يا غالي"); }
     }
 
@@ -169,7 +186,48 @@
         btn.classList.add('active');
     }
 
-    // جلب بيانات الأونلاين (الرادار) دمجاً مع بيانات اليوزرز
+    // --- نظام سجل الدخول اللحظي (24 ساعة) ---
+    function listenToLogs() {
+        const now = Date.now();
+        const oneDayAgo = now - (24 * 60 * 60 * 1000);
+
+        db.ref('login_logs').orderByChild('timestamp').startAt(oneDayAgo).on('value', (snap) => {
+            let html = "";
+            const logs = snap.val();
+            if(!logs) {
+                html = "<p style='text-align:center; color:#aaa;'>لا يوجد سجلات دخول حالية</p>";
+            } else {
+                const arr = Object.values(logs).reverse();
+                arr.forEach(log => {
+                    const date = new Date(log.timestamp).toLocaleString('ar-EG');
+                    html += `
+                        <div class="log-item">
+                            <span class="log-user">👤 ${log.user}</span>
+                            <span class="log-time">${date}</span>
+                        </div>
+                    `;
+                });
+            }
+            document.getElementById('login-logs-list').innerHTML = html;
+        });
+    }
+
+    function cleanOldLogs() {
+        const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
+        db.ref('login_logs').orderByChild('timestamp').endAt(oneDayAgo).once('value', (snap) => {
+            snap.forEach((child) => {
+                child.ref.remove();
+            });
+        });
+    }
+
+    function clearLoginLogs() {
+        if(confirm("مسح كل سجل الدخول؟")) {
+            db.ref('login_logs').remove();
+        }
+    }
+    // ---------------------------------------
+
     function startLiveUpdate() {
         db.ref('users').on('value', (userSnap) => {
             db.ref('status').on('value', (statusSnap) => {
@@ -209,7 +267,6 @@
             });
         });
 
-        // استماع للطلبات (نفس كودك القديم)
         db.ref('orders').on('value', (snap) => {
             const orders = snap.val();
             if(!orders) { document.getElementById('orders-list').innerHTML = `<div style="text-align:center; padding:40px; color:#aaa;">لا يوجد طلبات</div>`; return; }
@@ -235,7 +292,6 @@
         });
     }
 
-    // إدارة الشريط المتحرك
     function loadTickerData() {
         db.ref('settings/ticker').once('value').then(snap => {
             if(snap.exists()) {
@@ -254,7 +310,6 @@
         } else { alert("عبّي البيانات يا قصي!"); }
     }
 
-    // الدوال المساعدة (نفس كودك الأصلي)
     function saveUserData(u) {
         const b = parseFloat(document.getElementById('bal_'+u).value);
         const p = document.getElementById('pass_'+u).value;
