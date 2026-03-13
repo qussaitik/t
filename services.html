@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>عالم المصيبة | الواجهة المطورة</title>
+    <title>عالم المصيبة | الخدمات الملكية</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
@@ -17,6 +17,7 @@
             --accent: #ff7675;
             --bg: #f8f9fd;
             --white: #ffffff;
+            --gold: #f1c40f;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -28,147 +29,133 @@
             padding-bottom: 30px;
         }
 
+        /* شريط الإهداء المتحرك الفخم */
+        .love-ticker {
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            color: white;
+            padding: 8px 0;
+            overflow: hidden;
+            position: sticky;
+            top: 0;
+            z-index: 2000;
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.2);
+            font-weight: 700;
+            font-size: 14px;
+        }
+        .ticker-content {
+            display: inline-block;
+            white-space: nowrap;
+            padding-right: 100%;
+            animation: ticker 25s linear infinite;
+        }
+        @keyframes ticker {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
         #loader {
             position: fixed; inset: 0; background: var(--white);
             display: flex; justify-content: center; align-items: center; z-index: 10000;
         }
-        .spinner { width: 35px; height: 35px; border: 3px solid #eee; border-top: 3px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* تعديل منطقة الاسم لتصبح "شي حلو" وفخم */
         .header {
-            background: linear-gradient(180deg, rgba(108, 92, 231, 0.08) 0%, var(--white) 100%);
+            background: var(--white);
             padding: 40px 20px 30px;
             text-align: center;
-            position: relative;
-            border-bottom: 1px solid rgba(108, 92, 231, 0.05);
+            border-radius: 0 0 40px 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            margin-bottom: 20px;
         }
-        .logout-btn { position: absolute; top: 25px; left: 20px; color: #b2bec3; font-size: 22px; cursor: pointer; }
-        .welcome-text { font-size: 14px; color: var(--primary); font-weight: 500; margin-bottom: 8px; opacity: 0.8; }
-        
-        /* تصميم صندوق الاسم المتميز */
+        .logout-btn { position: absolute; top: 50px; left: 20px; color: #b2bec3; font-size: 22px; cursor: pointer; }
+
         .user-name-wrapper { 
-            display: inline-flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 12px;
-            background: rgba(255, 255, 255, 0.6);
-            padding: 10px 25px;
-            border-radius: 50px;
-            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.05);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.8);
+            display: inline-flex; align-items: center; gap: 12px;
+            background: #f0eeff; padding: 10px 25px; border-radius: 50px;
+            margin-top: 10px;
         }
-        .user-name-wrapper b { 
-            font-size: 28px; 
-            color: var(--primary); 
-            font-weight: 900; 
-            text-shadow: 0 2px 4px rgba(108, 92, 231, 0.1);
-            letter-spacing: -0.5px;
-        }
-        .heart { color: var(--accent); font-size: 20px; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+        .user-name-wrapper b { font-size: 24px; color: var(--primary); font-weight: 900; }
+        .heart { color: var(--accent); animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.3); } }
 
-        /* باقي العناصر بدون أي تغيير */
         .nav-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            padding: 20px;
-            max-width: 500px;
-            margin: auto;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
+            padding: 0 20px; max-width: 500px; margin: 0 auto 30px;
         }
-
         .nav-item {
-            background: var(--white);
-            padding: 18px 10px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            font-size: 14px;
-            font-weight: 700;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-            cursor: pointer;
-            border: 1px solid transparent;
-            transition: 0.3s;
+            background: var(--white); padding: 18px; border-radius: 22px;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            font-size: 14px; font-weight: 700; box-shadow: 0 5px 15px rgba(0,0,0,0.02);
+            cursor: pointer; transition: 0.3s;
         }
-        .nav-item:hover { border-color: var(--secondary); transform: translateY(-2px); }
+        .nav-item:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(108, 92, 231, 0.1); }
+        .balance-item { background: linear-gradient(135deg, var(--primary), #8e44ad); color: white; border: none; }
 
-        .balance-item {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: var(--white);
-            flex-direction: column;
-            gap: 2px;
-            border: none;
-        }
-        .balance-item small { font-size: 11px; font-weight: 400; opacity: 0.9; }
-        .balance-item span { font-size: 18px; font-weight: 900; }
+        .section-title { padding: 10px 25px; font-size: 18px; font-weight: 900; color: #2d3436; display: flex; align-items: center; gap: 10px; }
+        .section-title::after { content: ""; flex: 1; height: 2px; background: #eee; }
 
-        .section-title { padding: 10px 25px; font-size: 17px; font-weight: 800; color: #636e72; }
-        
         .services-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            padding: 0 20px;
-            max-width: 800px;
-            margin: auto;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
+            padding: 20px; max-width: 800px; margin: auto;
         }
-
         .card {
-            background: var(--white);
-            padding: 25px 15px;
-            border-radius: 25px;
-            text-align: center;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.02);
-            border: 1px solid #f1f1f1;
-            transition: 0.3s;
+            background: var(--white); padding: 25px 15px; border-radius: 30px;
+            text-align: center; border: 1px solid rgba(0,0,0,0.02); transition: 0.4s;
+            position: relative; overflow: hidden;
         }
-        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        .card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(108, 92, 231, 0.12); }
+        .card::before {
+            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 5px;
+            background: var(--primary); opacity: 0; transition: 0.3s;
+        }
+        .card:hover::before { opacity: 1; }
 
         .card-icon {
-            width: 60px; height: 60px; border-radius: 18px;
+            width: 65px; height: 65px; border-radius: 20px;
             margin: 0 auto 15px; display: flex; align-items: center; justify-content: center;
-            font-size: 28px; color: var(--white);
+            font-size: 30px; color: white; transition: 0.3s;
         }
+        .card:hover .card-icon { transform: rotate(-10deg) scale(1.1); }
 
-        .card h3 { font-size: 14px; font-weight: 700; margin-bottom: 8px; color: #2d3436; }
         .badge {
-            font-size: 10px; font-weight: 700; color: var(--primary);
-            background: #f0eeff; padding: 4px 12px; border-radius: 50px;
+            display: inline-block; margin-top: 10px; font-size: 11px; font-weight: 800;
+            color: var(--primary); background: #f0eeff; padding: 6px 15px; border-radius: 50px;
         }
 
         #custom-alert {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.4);
-            display: none; align-items: center; justify-content: center; z-index: 11000;
-            backdrop-filter: blur(4px);
+            position: fixed; inset: 0; background: rgba(15, 12, 41, 0.8);
+            display: none; align-items: center; justify-content: center; z-index: 11000; backdrop-filter: blur(8px);
         }
         .alert-content {
-            background: var(--white); padding: 35px; border-radius: 30px; text-align: center;
-            width: 85%; max-width: 350px;
+            background: var(--white); padding: 40px; border-radius: 35px; text-align: center; width: 85%; max-width: 350px;
+            animation: slideUp 0.4s ease-out;
         }
-        .alert-btn { margin-top: 20px; background: var(--primary); color: #fff; border: none; padding: 10px 40px; border-radius: 50px; font-family: 'Tajawal'; cursor: pointer; font-weight: 700; }
-
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
 </head>
 <body>
+
+    <div class="love-ticker">
+        <div class="ticker-content">
+             اللهم اجمع بين قصي وورده بالخير والحلال واجعل أيامهما سعادة وهناء ❤️ يا رب لا تفرق بين قلبين تعاهدا على الحب الطاهر ❤️ نورتوا عالم المصيبة الماركت الأقوى بوجودكم! ❤️ 
+        </div>
+    </div>
 
     <div id="loader"><div class="spinner"></div></div>
 
     <div id="custom-alert">
         <div class="alert-content">
-            <i class="fas fa-check-circle" style="font-size: 55px; color: #00b894; margin-bottom: 15px;"></i>
-            <h2 style="font-size: 19px;">تم استلام الطلب</h2>
-            <p style="font-size: 13px; color: #636e72; margin-top: 8px;">طلبك الآن في مرحلة المراجعة لدى الإدارة.</p>
-            <button class="alert-btn" onclick="document.getElementById('custom-alert').style.display='none'">حسناً</button>
+            <i class="fas fa-check-circle" style="font-size: 60px; color: #00b894; margin-bottom: 20px;"></i>
+            <h2 style="font-weight: 900;">تم استلام الطلب</h2>
+            <p style="color: #636e72; margin-top: 10px;">طلبك الآن في عهدة إدارة عالم المصيبة وسيتم تنفيذه بسرعة البرق.</p>
+            <button style="margin-top: 25px; background: var(--primary); color: white; border: none; padding: 12px 40px; border-radius: 50px; font-weight: 700; cursor: pointer;" onclick="document.getElementById('custom-alert').style.display='none'">حسناً يا بطل</button>
         </div>
     </div>
 
     <div class="header">
-        <i class="fas fa-power-off logout-btn" onclick="logout()"></i>
-        <p class="welcome-text">أهلاً بك في عالمك الخاص،</p>
+        <i class="fas fa-sign-out-alt logout-btn" onclick="logout()"></i>
+        <p style="opacity: 0.6; font-size: 13px;">مرحباً بك في عالم الفخامة</p>
         <div class="user-name-wrapper">
             <i class="fas fa-heart heart"></i>
             <b id="user-name-display">...</b>
@@ -178,60 +165,50 @@
 
     <div class="nav-grid">
         <div class="nav-item balance-item">
-            <small>الرصيد الحالي</small>
-            <span id="user-balance-display">$0.0000</span>
+            <div style="text-align: center;">
+                <p style="font-size: 11px; opacity: 0.8;">رصيدك</p>
+                <span id="user-balance-display" style="font-size: 20px; font-weight: 900;">$0.0000</span>
+            </div>
         </div>
         <div class="nav-item" onclick="submitRequest('شحن رصيد')">
-            <i class="fas fa-plus-circle" style="color: #00b894; font-size: 18px;"></i>
+            <i class="fas fa-wallet" style="color: #00b894;"></i>
             <span>شحن رصيد</span>
         </div>
         <div class="nav-item" onclick="window.location.href='my-orders.html'">
-            <i class="fas fa-receipt" style="color: #6c5ce7; font-size: 18px;"></i>
-            <span>سجل الطلبات</span>
+            <i class="fas fa-history" style="color: var(--primary);"></i>
+            <span>طلباتي</span>
         </div>
         <div class="nav-item" onclick="submitRequest('دعم فني')">
-            <i class="fas fa-headset" style="color: #ff7675; font-size: 18px;"></i>
+            <i class="fas fa-comment-dots" style="color: var(--accent);"></i>
             <span>دعم فني</span>
         </div>
     </div>
 
-    <h2 class="section-title">خدمات التواصل الاجتماعي</h2>
-
+    <h2 class="section-title">خدمات التيك توك <i class="fab fa-tiktok"></i></h2>
     <div class="services-grid">
         <div class="card" onclick="openOrder('متابعين تيك توك')">
-            <div class="card-icon" style="background: #000;"><i class="fab fa-tiktok"></i></div>
+            <div class="card-icon" style="background: #000; box-shadow: 0 10px 20px rgba(0,0,0,0.2);"><i class="fab fa-tiktok"></i></div>
             <h3>متابعين تيك توك</h3>
-            <span class="badge">1000 متابع بـ 5$</span>
+            <span class="badge">الأفضل سعراً</span>
         </div>
-
         <div class="card" onclick="openOrder('مشاهدات تيك توك')">
-            <div class="card-icon" style="background: #000;"><i class="fas fa-eye"></i></div>
-            <h3>مشاهدات تيك توك</h3>
-            <span class="badge">10,000 مشاهدة بـ 1$</span>
+            <div class="card-icon" style="background: #fe2c55; box-shadow: 0 10px 20px rgba(254,44,85,0.2);"><i class="fas fa-bolt"></i></div>
+            <h3>مشاهدات سريعة</h3>
+            <span class="badge">تنفيذ فوري</span>
         </div>
+    </div>
 
-        <div class="card" onclick="openOrder('إعجابات تيك توك')">
-            <div class="card-icon" style="background: #000;"><i class="fas fa-heart"></i></div>
-            <h3>إعجابات تيك توك</h3>
-            <span class="badge">1000 إعجاب بـ 0.5$</span>
-        </div>
-
+    <h2 class="section-title">خدمات الإنستغرام <i class="fab fa-instagram"></i></h2>
+    <div class="services-grid">
         <div class="card" onclick="openOrder('متابعين إنستغرام')">
             <div class="card-icon" style="background: linear-gradient(45deg, #f09433, #dc2743, #bc1888);"><i class="fab fa-instagram"></i></div>
-            <h3>متابعين إنستغرام</h3>
-            <span class="badge">1000 متابع بـ 3$</span>
+            <h3>متابعين VIP</h3>
+            <span class="badge">ضمان 30 يوم</span>
         </div>
-        
-        <div class="card" onclick="openOrder('متابعين فيسبوك')">
-            <div class="card-icon" style="background: #1877f2;"><i class="fab fa-facebook-f"></i></div>
-            <h3>متابعين فيسبوك</h3>
-            <span class="badge">1000 متابع بـ 4$</span>
-        </div>
-
-        <div class="card" onclick="openOrder('مشتركين يوتيوب')">
-            <div class="card-icon" style="background: #ff0000;"><i class="fab fa-youtube"></i></div>
-            <h3>مشتركين يوتيوب</h3>
-            <span class="badge">1000 مشترك بـ 15$</span>
+        <div class="card" onclick="openOrder('لايكات إنستغرام')">
+            <div class="card-icon" style="background: #ff4757;"><i class="fas fa-heart"></i></div>
+            <h3>لايكات حقيقية</h3>
+            <span class="badge">سرعة جنونية</span>
         </div>
     </div>
 
@@ -254,7 +231,7 @@
 
         window.onload = () => {
             document.getElementById('user-name-display').innerText = user;
-            setTimeout(() => { document.getElementById('loader').style.display = 'none'; }, 600);
+            setTimeout(() => { document.getElementById('loader').style.display = 'none'; }, 800);
             
             database.ref('users/' + user + '/balance').on('value', (snapshot) => {
                 document.getElementById('user-balance-display').innerText = "$" + parseFloat(snapshot.val() || 0).toFixed(4);
