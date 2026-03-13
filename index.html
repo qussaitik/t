@@ -6,13 +6,17 @@
     <title>عالم المصيبة | Al-Musaiba World</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
     <style>
         :root {
-            --bg-deep: #0a0a0c;       /* أسود بركاني عميق جداً */
-            --fire-core: #ff3e00;    /* أحمر ناري */
-            --fire-glow: #ff8c00;    /* برتقالي */
+            --bg-deep: #0a0a0c;
+            --fire-core: #ff3e00;
+            --fire-glow: #ff8c00;
             --gold-light: #ffd700;
-            --card-bg: rgba(20, 20, 25, 0.9); /* خلفية الكرت سودة فخمة */
+            --card-bg: rgba(20, 20, 25, 0.9);
             --w: #25d366; 
         }
 
@@ -30,7 +34,7 @@
             color: white;
         }
 
-        /* لودر العمليات - رجعتلك كل التفاصيل */
+        /* لودر العمليات */
         #loader {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(10, 10, 15, 0.98); z-index: 9999; flex-direction: column;
@@ -56,12 +60,11 @@
 
         .progress-bar {
             width: 100%; height: 100%; background: linear-gradient(90deg, var(--fire-core), var(--fire-glow));
-            border-radius: 10px; animation: progressAnim 12s linear forwards;
+            border-radius: 10px; animation: progressAnim 3s linear infinite;
         }
 
-        @keyframes progressAnim { from { width: 100%; } to { width: 0%; } }
+        @keyframes progressAnim { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-        /* كرت الدخول - أسود ناري ومسنتر */
         .auth-card {
             background: var(--card-bg); 
             padding: 40px 30px; border-radius: 30px; width: 88%;
@@ -86,8 +89,10 @@
             width: 100%; padding: 18px; margin-bottom: 15px; border-radius: 15px; 
             border: 1px solid rgba(255,255,255,0.1);
             background: rgba(255,255,255,0.05); color: white; text-align: center;
-            font-family: 'Tajawal'; font-size: 16px;
+            font-family: 'Tajawal'; font-size: 16px; outline: none;
         }
+        
+        input:focus { border-color: var(--fire-core); }
 
         button {
             width: 100%; padding: 18px; border-radius: 15px; border: none;
@@ -95,6 +100,8 @@
             color: white; font-weight: 900; font-size: 19px; cursor: pointer;
             transition: 0.3s; box-shadow: 0 8px 20px rgba(255, 62, 0, 0.3);
         }
+
+        button:active { transform: scale(0.98); }
 
         .logo-icon { font-size: 50px; margin-bottom: 15px; display: inline-block; }
         .toggle-btn { margin-top: 30px; font-size: 15px; color: #aaa; }
@@ -105,7 +112,7 @@
 
     <div id="loader">
         <div class="dua-container">
-            <p style="opacity: 0.8; font-size: 14px; margin-bottom: 10px;">جاري فتح الموقع وتحديث الرصيد..</p>
+            <p style="opacity: 0.8; font-size: 14px; margin-bottom: 10px;">جاري الاتصال بقاعدة البيانات..</p>
             <h3 style="color: var(--gold-light); margin: 15px 0; font-size: 24px; font-weight: 900;">قُصي وورده ❤️</h3>
             <p style="font-size: 13px; color: #ccc;">اللهم اجمع بينهم بالخير والحلال قريباً</p>
         </div>
@@ -135,40 +142,85 @@
     </div>
 
     <script>
-        const url = "https://script.google.com/macros/s/AKfycbzUEWbeyHTdG2Eu96NZxxJJHWToeLsuOh6VuF-fiTeEpK9JP1mceRVra6HFP2EoiPdo/exec";
+        // إعدادات الفايربيز الخاصة بمشروعك
+        const firebaseConfig = {
+            apiKey: "AIzaSyDH4h6Dg1DM9xGLc8x7mUaqnVICBf6HnNk",
+            authDomain: "al-musaiba.firebaseapp.com",
+            databaseURL: "https://al-musaiba-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "al-musaiba",
+            storageBucket: "al-musaiba.firebasestorage.app",
+            messagingSenderId: "693047037412",
+            appId: "1:693047037412:web:9d3f3ab7831ac35cd80bf1"
+        };
+
+        // تشغيل الفايربيز
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
 
         function toggle(isReg) {
             document.getElementById('login-box').style.display = isReg ? 'none' : 'block';
             document.getElementById('reg-box').style.display = isReg ? 'block' : 'none';
         }
 
-        async function executeLogin() {
-            const u = document.getElementById('user').value.trim();
+        // دالة تسجيل الدخول
+        function executeLogin() {
+            const u = document.getElementById('user').value.trim().toLowerCase();
             const p = document.getElementById('pass').value.trim();
+
             if(!u || !p) return alert("يا غالي عبي البيانات!");
+            
             document.getElementById('loader').style.display = 'flex';
-            try {
-                const res = await fetch(url + "?action=getBalances");
-                const data = await res.json();
-                if(data[u] && String(data[u].password).trim() === String(p).trim()) {
-                    if(data[u].status === "محظور") { alert("⚠️ حسابك محظور"); location.reload(); }
-                    else { localStorage.setItem('user', u); window.location.href = "services.html"; }
-                } else { alert("❌ خطأ في البيانات"); location.reload(); }
-            } catch(e) { alert("⚠️ مشكلة شبكة"); location.reload(); }
+
+            database.ref('users/' + u).once('value').then((snapshot) => {
+                const userData = snapshot.val();
+                if (userData && userData.password === p) {
+                    if (userData.status === "محظور") {
+                        alert("⚠️ حسابك محظور من الإدارة");
+                        location.reload();
+                    } else {
+                        localStorage.setItem('user', u);
+                        window.location.href = "services.html";
+                    }
+                } else {
+                    alert("❌ خطأ في الاسم أو كلمة المرور");
+                    document.getElementById('loader').style.display = 'none';
+                }
+            }).catch((error) => {
+                alert("⚠️ مشكلة في الاتصال بالشبكة");
+                document.getElementById('loader').style.display = 'none';
+            });
         }
 
-        async function executeRegister() {
-            const u = document.getElementById('reg-user').value.trim();
+        // دالة إنشاء الحساب
+        function executeRegister() {
+            const u = document.getElementById('reg-user').value.trim().toLowerCase();
             const e = document.getElementById('reg-email').value.trim();
             const p = document.getElementById('reg-pass').value.trim();
-            if(!u || !e || !p) return alert("كمل البيانات!");
+
+            if(!u || !e || !p) return alert("كمل البيانات يا وحش!");
+            
             document.getElementById('loader').style.display = 'flex';
-            try {
-                const res = await fetch(url, { method: "POST", body: JSON.stringify({ action: "registerUser", user: u, email: e, pass: p }) });
-                const result = await res.text();
-                if(result === "Success") { alert("✅ تم بنجاح! سجل دخولك."); location.reload(); }
-                else { alert("❌ الاسم مستخدم"); document.getElementById('loader').style.display = 'none'; }
-            } catch(err) { alert("⚠️ فشل التسجيل"); document.getElementById('loader').style.display = 'none'; }
+
+            // فحص إذا المستخدم موجود مسبقاً
+            database.ref('users/' + u).once('value').then((snapshot) => {
+                if (snapshot.exists()) {
+                    alert("❌ هذا الاسم محجوز، اختار غيره");
+                    document.getElementById('loader').style.display = 'none';
+                } else {
+                    // إنشاء الحساب الجديد
+                    database.ref('users/' + u).set({
+                        username: u,
+                        email: e,
+                        password: p,
+                        balance: 0,
+                        status: "نشط",
+                        joinDate: new Date().toISOString()
+                    }).then(() => {
+                        alert("✅ تم بنجاح! هسا سجل دخولك يا بطل.");
+                        location.reload();
+                    });
+                }
+            });
         }
     </script>
 </body>
