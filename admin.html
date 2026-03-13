@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>غرفة العمليات | عالم المصيبة</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
@@ -12,13 +12,12 @@
 
     <style>
         :root { 
-            --primary: #8e44ad; 
-            --secondary: #2ecc71; 
-            --bg: #0f0f13; 
-            --card-bg: #1a1a20;
-            --text: #e0e0e0;
-            --danger: #e74c3c; 
-            --accent: #6c5ce7;
+            --primary: #6c5ce7; 
+            --secondary: #00b894; 
+            --bg: #f8f9fd; 
+            --white: #ffffff;
+            --danger: #ff7675; 
+            --text: #2d3436;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
@@ -34,69 +33,78 @@
         #admin-login {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg); z-index: 10000; display: flex;
-            align-items: center; justify-content: center; backdrop-filter: blur(10px);
+            align-items: center; justify-content: center;
         }
         .login-box {
-            background: var(--card-bg); padding: 40px; border-radius: 25px;
-            border: 1px solid rgba(255,255,255,0.05); text-align: center;
-            width: 90%; max-width: 380px; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            background: var(--white); padding: 50px 40px; border-radius: 40px;
+            text-align: center;
+            width: 90%; max-width: 400px; 
+            box-shadow: 0 25px 50px rgba(108, 92, 231, 0.1);
         }
-        .login-box i { font-size: 50px; color: var(--accent); margin-bottom: 20px; }
+        .login-box i { font-size: 50px; color: var(--primary); margin-bottom: 20px; }
+        .login-box h2 { font-weight: 900; margin-bottom: 25px; color: var(--text); }
         .login-box input { 
-            width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #333;
-            background: #111; color: white; text-align: center; font-size: 18px; margin-bottom: 20px;
+            width: 100%; padding: 18px; border-radius: 20px; border: 2px solid #f1f1f1;
+            background: #fafafa; color: var(--text); text-align: center; font-size: 18px; margin-bottom: 20px;
+            transition: 0.3s;
         }
+        .login-box input:focus { border-color: var(--primary); background: var(--white); }
         .btn-login { 
-            width: 100%; padding: 12px; border-radius: 12px; border: none;
-            background: var(--accent); color: white; font-weight: 900; cursor: pointer;
+            width: 100%; padding: 18px; border-radius: 20px; border: none;
+            background: linear-gradient(135deg, var(--primary), #a29bfe); color: white; font-weight: 900; cursor: pointer;
+            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.2);
         }
 
-        .container { max-width: 1000px; margin: 0 auto; display: none; animation: fadeIn 0.5s ease; }
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #222; padding-bottom: 15px; }
-        header h1 { font-weight: 900; color: var(--accent); font-size: 24px; }
+        .container { max-width: 900px; margin: 0 auto; display: none; animation: fadeIn 0.5s ease; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding-bottom: 15px; }
+        header h1 { font-weight: 900; color: var(--primary); font-size: 26px; }
 
-        .tabs { display: flex; gap: 10px; margin-bottom: 25px; background: var(--card-bg); padding: 5px; border-radius: 15px; }
-        .tab-btn { flex: 1; padding: 12px; border: none; border-radius: 10px; background: transparent; color: #888; cursor: pointer; font-weight: bold; font-family: 'Tajawal'; transition: 0.3s; }
-        .tab-btn.active { background: var(--accent); color: white; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 25px; background: #eeefff; padding: 7px; border-radius: 20px; }
+        .tab-btn { flex: 1; padding: 14px; border: none; border-radius: 15px; background: transparent; color: #7f8c8d; cursor: pointer; font-weight: bold; font-family: 'Tajawal'; transition: 0.3s; }
+        .tab-btn.active { background: var(--white); color: var(--primary); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
 
         .content-section { display: none; }
         .content-section.active { display: block; }
 
         /* الكروت المحسنة */
         .card { 
-            background: var(--card-bg); padding: 20px; border-radius: 20px; 
-            margin-bottom: 15px; border: 1px solid #25252b; transition: 0.3s;
+            background: var(--white); padding: 25px; border-radius: 30px; 
+            margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.8); 
+            box-shadow: 0 10px 25px rgba(108, 92, 231, 0.05);
+            transition: 0.3s;
         }
-        .card:hover { border-color: var(--accent); }
+        .card:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(108, 92, 231, 0.1); }
 
-        .flex-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .flex-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
         
-        .user-tag { background: #25252b; padding: 5px 12px; border-radius: 8px; font-weight: bold; color: var(--accent); }
+        .user-tag { background: #f0eeff; padding: 8px 15px; border-radius: 12px; font-weight: 900; color: var(--primary); }
         
-        .controls { display: flex; gap: 8px; align-items: center; margin-top: 15px; }
+        .controls { display: flex; gap: 12px; align-items: center; margin-top: 20px; padding-top: 15px; border-top: 1px solid #f1f1f1; }
+        
         input[type="number"], input[type="text"], select { 
-            background: #111; border: 1px solid #333; color: white; 
-            padding: 8px 12px; border-radius: 8px; font-family: 'Tajawal';
+            background: #fafafa; border: 2px solid #f1f1f1; color: var(--text); 
+            padding: 10px 15px; border-radius: 12px; font-family: 'Tajawal'; font-weight: 600;
+            transition: 0.3s;
         }
+        input:focus, select:focus { border-color: var(--primary); background: var(--white); }
 
-        .btn { border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; font-family: 'Tajawal'; transition: 0.2s; }
-        .btn-save { background: var(--secondary); color: #052c14; }
-        .btn-del { background: transparent; border: 1px solid var(--danger); color: var(--danger); }
+        .btn { border: none; padding: 10px 20px; border-radius: 12px; cursor: pointer; font-weight: bold; font-family: 'Tajawal'; transition: 0.2s; }
+        .btn-save { background: var(--secondary); color: white; box-shadow: 0 5px 15px rgba(0, 184, 148, 0.2); }
+        .btn-del { background: #fff1f0; color: var(--danger); border: 1px solid rgba(255, 118, 117, 0.2); }
         .btn-del:hover { background: var(--danger); color: white; }
-        .btn-logout { background: #333; color: white; font-size: 12px; }
+        .btn-logout { background: var(--white); color: var(--danger); border: 1px solid #ffeaea; font-size: 13px; font-weight: 800; }
 
-        .order-info { font-size: 13px; color: #aaa; margin: 10px 0; background: #111; padding: 10px; border-radius: 10px; }
-        .status-badge { padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .order-info { font-size: 14px; color: #636e72; margin: 15px 0; background: #f9f9fc; padding: 15px; border-radius: 15px; border-right: 4px solid var(--primary); }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
 <div id="admin-login">
     <div class="login-box">
-        <i class="fas fa-shield-alt"></i>
-        <h2 style="margin-bottom:20px">غرفة العمليات</h2>
+        <i class="fas fa-user-shield"></i>
+        <h2>غرفة العمليات</h2>
         <input type="password" id="adminPass" placeholder="رمز الدخول الخاص">
         <button class="btn-login" onclick="checkAdmin()">دخول النظام</button>
     </div>
@@ -104,13 +112,13 @@
 
 <div class="container" id="main-content">
     <header>
-        <h1><i class="fas fa-user-crown"></i> إدارة عالم المصيبة</h1>
-        <button class="btn btn-logout" onclick="adminLogout()">خروج</button>
+        <h1>🔐 لوحة التحكم</h1>
+        <button class="btn btn-logout" onclick="adminLogout()">تسجيل خروج <i class="fas fa-sign-out-alt"></i></button>
     </header>
 
     <div class="tabs">
         <button class="tab-btn active" onclick="showTab('users-tab', this)"><i class="fas fa-users"></i> المشتركين</button>
-        <button class="tab-btn" onclick="showTab('orders-tab', this)"><i class="fas fa-shopping-cart"></i> الطلبات</button>
+        <button class="tab-btn" onclick="showTab('orders-tab', this)"><i class="fas fa-shopping-basket"></i> الطلبات</button>
     </div>
 
     <div id="users-tab" class="content-section active">
@@ -118,8 +126,8 @@
     </div>
 
     <div id="orders-tab" class="content-section">
-        <button onclick="clearOrders()" class="btn btn-del" style="width:100%; margin-bottom:20px; padding:15px">
-            <i class="fas fa-trash"></i> مسح سجل الطلبات بالكامل
+        <button onclick="clearOrders()" class="btn btn-del" style="width:100%; margin-bottom:25px; padding:18px; border-radius: 20px; font-weight: 900;">
+            <i class="fas fa-trash-alt"></i> مسح سجل الطلبات بالكامل
         </button>
         <div id="orders-list"></div>
     </div>
@@ -159,7 +167,6 @@
     }
 
     function startLiveUpdate() {
-        // إدارة المستخدمين بكل الميزات
         db.ref('users').on('value', (snap) => {
             const users = snap.val();
             let html = "";
@@ -175,11 +182,11 @@
                         </select>
                     </div>
                     <div class="controls flex-row">
-                        <span>💰 رصيد: <input type="number" id="bal_${u}" value="${users[u].balance}" style="width:80px"></span>
-                        <span>🔑 سر: <input type="text" id="pass_${u}" value="${users[u].password}" style="width:100px"></span>
-                        <div style="display:flex; gap:5px">
+                        <span>💰 رصيد ($): <input type="number" id="bal_${u}" value="${users[u].balance}" style="width:100px"></span>
+                        <span>🔑 سر: <input type="text" id="pass_${u}" value="${users[u].password}" style="width:120px"></span>
+                        <div style="display:flex; gap:8px">
                             <button class="btn btn-save" onclick="saveUserData('${u}')">حفظ</button>
-                            <button class="btn btn-del" onclick="deleteAccount('${u}')"><i class="fas fa-user-times"></i></button>
+                            <button class="btn btn-del" onclick="deleteAccount('${u}')"><i class="fas fa-trash"></i></button>
                         </div>
                     </div>
                 </div>`;
@@ -187,23 +194,23 @@
             document.getElementById('users-list').innerHTML = html;
         });
 
-        // إدارة الطلبات
         db.ref('orders').on('value', (snap) => {
             const orders = snap.val();
-            if(!orders) { document.getElementById('orders-list').innerHTML = "لا يوجد طلبات"; return; }
+            if(!orders) { document.getElementById('orders-list').innerHTML = `<div class="no-orders" style="text-align:center; padding:40px; color:#aaa;">لا يوجد طلبات حالياً</div>`; return; }
             const arr = Object.values(orders).reverse();
             let html = arr.map(o => `
                 <div class="card">
                     <div class="flex-row">
-                        <b style="color:var(--accent)">${o.service}</b>
-                        <small>${o.date}</small>
+                        <b style="color:var(--primary); font-size:18px;">${o.service}</b>
+                        <small style="color:#b2bec3;">${o.date}</small>
                     </div>
                     <div class="order-info">
-                        يوزر: ${o.user} | كمية: ${o.qty} <br>
-                        رابط: <a href="${o.link}" target="_blank" style="color:var(--accent)">اضغط لفتح الرابط</a>
+                        <strong>المستخدم:</strong> ${o.user} <br>
+                        <strong>الكمية:</strong> ${o.qty} <br>
+                        <strong>الرابط:</strong> <a href="${o.link}" target="_blank" style="color:var(--primary); font-weight:700;">فتح الرابط <i class="fas fa-external-link-alt"></i></a>
                     </div>
                     <div class="flex-row">
-                        <select id="st_${o.orderId}">
+                        <select id="st_${o.orderId}" style="flex:1">
                             <option value="قيد التنفيذ" ${o.status === 'قيد التنفيذ' ? 'selected' : ''}>⏳ قيد التنفيذ</option>
                             <option value="مكتمل" ${o.status === 'مكتمل' ? 'selected' : ''}>✅ مكتمل</option>
                             <option value="ملغي" ${o.status === 'ملغي' ? 'selected' : ''}>❌ ملغي</option>
@@ -237,7 +244,7 @@
         const updates = {};
         updates['/orders/' + id + '/status'] = s;
         updates['/user_orders/' + u + '/' + id + '/status'] = s;
-        db.ref().update(updates).then(() => alert("تم التحديث"));
+        db.ref().update(updates).then(() => alert("تم التحديث بنجاح"));
     }
 
     function clearOrders() {
