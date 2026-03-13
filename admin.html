@@ -12,86 +12,141 @@
 
     <style>
         :root { 
-            --primary: #6c5ce7; --secondary: #00b894; --bg: #f8f9fd; 
-            --white: #ffffff; --danger: #ff7675; --text: #2d3436; --gold: #f1c40f;
+            --primary: #6c5ce7; 
+            --secondary: #00b894; 
+            --bg: #f8f9fd; 
+            --white: #ffffff;
+            --danger: #ff7675; 
+            --text: #2d3436;
+            --gold: #f1c40f;
         }
+
         * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
-        body { font-family: 'Tajawal', sans-serif; background-color: var(--bg); color: var(--text); padding: 20px; line-height: 1.6; }
+        body { 
+            font-family: 'Tajawal', sans-serif; 
+            background-color: var(--bg); 
+            color: var(--text); 
+            min-height: 100vh; padding: 20px;
+            line-height: 1.6;
+        }
 
         /* شاشة الدخول */
-        #admin-login { position: fixed; inset: 0; background: var(--bg); z-index: 10000; display: flex; align-items: center; justify-content: center; }
-        .login-box { background: var(--white); padding: 50px 40px; border-radius: 40px; text-align: center; width: 90%; max-width: 400px; box-shadow: 0 25px 50px rgba(108, 92, 231, 0.1); }
-        .login-box input { width: 100%; padding: 18px; border-radius: 20px; border: 2px solid #f1f1f1; margin-bottom: 20px; text-align: center; }
-        .btn-login { width: 100%; padding: 18px; border-radius: 20px; border: none; background: linear-gradient(135deg, var(--primary), #a29bfe); color: white; font-weight: 900; cursor: pointer; }
+        #admin-login {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); z-index: 10000; display: flex;
+            align-items: center; justify-content: center;
+        }
+        .login-box {
+            background: var(--white); padding: 50px 40px; border-radius: 40px;
+            text-align: center; width: 90%; max-width: 400px; 
+            box-shadow: 0 25px 50px rgba(108, 92, 231, 0.1);
+        }
+        .login-box i { font-size: 50px; color: var(--primary); margin-bottom: 20px; }
+        .login-box h2 { font-weight: 900; margin-bottom: 25px; }
+        .login-box input { 
+            width: 100%; padding: 18px; border-radius: 20px; border: 2px solid #f1f1f1;
+            background: #fafafa; text-align: center; font-size: 18px; margin-bottom: 20px;
+        }
+        .btn-login { 
+            width: 100%; padding: 18px; border-radius: 20px; border: none;
+            background: linear-gradient(135deg, var(--primary), #a29bfe); color: white; font-weight: 900; cursor: pointer;
+        }
 
-        .container { max-width: 900px; margin: 0 auto; display: none; }
+        .container { max-width: 900px; margin: 0 auto; display: none; animation: fadeIn 0.5s ease; }
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        header h1 { font-weight: 900; color: var(--primary); font-size: 26px; }
+
         .tabs { display: flex; gap: 10px; margin-bottom: 25px; background: #eeefff; padding: 7px; border-radius: 20px; overflow-x: auto; }
-        .tab-btn { flex: 1; padding: 14px; border: none; border-radius: 15px; background: transparent; color: #7f8c8d; cursor: pointer; font-weight: bold; white-space: nowrap; }
+        .tab-btn { flex: 1; padding: 14px; border: none; border-radius: 15px; background: transparent; color: #7f8c8d; cursor: pointer; font-weight: bold; font-family: 'Tajawal'; white-space: nowrap; }
         .tab-btn.active { background: var(--white); color: var(--primary); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
 
         .content-section { display: none; }
         .content-section.active { display: block; }
-        .card { background: var(--white); padding: 25px; border-radius: 30px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(108, 92, 231, 0.05); }
+
+        .card { 
+            background: var(--white); padding: 25px; border-radius: 30px; 
+            margin-bottom: 20px; box-shadow: 0 10px 25px rgba(108, 92, 231, 0.05);
+        }
+
         .flex-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .user-tag { background: #f0eeff; padding: 8px 15px; border-radius: 12px; font-weight: 900; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+        
+        .status-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+        .online { background-color: var(--secondary); box-shadow: 0 0 10px var(--secondary); }
+        .offline { background-color: #b2bec3; }
+
+        .controls { display: flex; gap: 12px; align-items: center; margin-top: 20px; padding-top: 15px; border-top: 1px solid #f1f1f1; }
+        input[type="number"], input[type="text"], select { background: #fafafa; border: 2px solid #f1f1f1; padding: 10px 15px; border-radius: 12px; font-family: 'Tajawal'; }
+
         .btn { border: none; padding: 10px 20px; border-radius: 12px; cursor: pointer; font-weight: bold; font-family: 'Tajawal'; }
         .btn-save { background: var(--secondary); color: white; }
         .btn-del { background: #fff1f0; color: var(--danger); }
-        input, select { background: #fafafa; border: 2px solid #f1f1f1; padding: 10px; border-radius: 12px; }
-        .price-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f1f1f1; }
+        .btn-logout { background: var(--white); color: var(--danger); border: 1px solid #ffeaea; }
+
+        /* سجل الدخول */
+        .log-item { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; }
+        .log-item:last-child { border-bottom: none; }
+        .log-user { font-weight: bold; color: var(--primary); }
+        .log-time { color: #888; font-size: 12px; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
 <div id="admin-login">
     <div class="login-box">
-        <i class="fas fa-user-shield" style="font-size:50px; color:var(--primary); margin-bottom:20px;"></i>
+        <i class="fas fa-user-shield"></i>
         <h2>غرفة العمليات</h2>
-        <input type="password" id="adminPass" placeholder="رمز الدخول">
-        <button class="btn-login" onclick="checkAdmin()">دخول</button>
+        <input type="password" id="adminPass" placeholder="رمز الدخول الخاص">
+        <button class="btn-login" onclick="checkAdmin()">دخول النظام</button>
     </div>
 </div>
 
 <div class="container" id="main-content">
     <header>
-        <h1 style="font-weight:900; color:var(--primary);">🔐 لوحة التحكم</h1>
-        <button class="btn" style="background:white; color:var(--danger);" onclick="location.reload()">خروج</button>
+        <h1>🔐 لوحة التحكم</h1>
+        <button class="btn btn-logout" onclick="adminLogout()">خروج <i class="fas fa-sign-out-alt"></i></button>
     </header>
 
     <div class="tabs">
-        <button class="tab-btn active" onclick="showTab('users-tab', this)">الرادار</button>
-        <button class="tab-btn" onclick="showTab('prices-tab', this)">الأسعار</button>
-        <button class="tab-btn" onclick="showTab('orders-tab', this)">الطلبات</button>
-        <button class="tab-btn" onclick="showTab('ticker-tab', this)">الشريط</button>
+        <button class="tab-btn active" onclick="showTab('users-tab', this)"><i class="fas fa-users"></i> الرادار</button>
+        <button class="tab-btn" onclick="showTab('logs-tab', this)"><i class="fas fa-history"></i> سجل دخول 24س</button>
+        <button class="tab-btn" onclick="showTab('ticker-tab', this)"><i class="fas fa-bullhorn"></i> الشريط</button>
+        <button class="tab-btn" onclick="showTab('orders-tab', this)"><i class="fas fa-shopping-basket"></i> الطلبات</button>
     </div>
 
-    <div id="users-tab" class="content-section active"><div id="users-list"></div></div>
+    <div id="users-tab" class="content-section active">
+        <div id="users-list"></div>
+    </div>
 
-    <div id="prices-tab" class="content-section">
+    <div id="logs-tab" class="content-section">
         <div class="card">
-            <h3 style="color:var(--primary); margin-bottom:15px;">💰 تعديل الأسعار (لكل 1000)</h3>
-            <div class="price-item"><span>تيك توك متابعين:</span> <input type="number" step="0.1" id="p_tt_f"></div>
-            <div class="price-item"><span>تيك توك مشاهدات:</span> <input type="number" step="0.1" id="p_tt_v"></div>
-            <div class="price-item"><span>تيك توك إعجابات:</span> <input type="number" step="0.1" id="p_tt_l"></div>
-            <div class="price-item"><span>إنستغرام متابعين:</span> <input type="number" step="0.1" id="p_ig_f"></div>
-            <div class="price-item"><span>فيسبوك متابعين:</span> <input type="number" step="0.1" id="p_fb_f"></div>
-            <div class="price-item"><span>يوتيوب مشتركين:</span> <input type="number" step="0.1" id="p_yt_s"></div>
-            <button class="btn btn-save" style="width:100%; margin-top:20px; padding:15px;" onclick="saveAllPrices()">حفظ الأسعار 🔥</button>
+            <div class="flex-row" style="margin-bottom: 20px;">
+                <h3 style="color: var(--primary);">🕒 سجل دخول آخر 24 ساعة</h3>
+                <button class="btn btn-del" onclick="clearLoginLogs()">مسح السجل</button>
+            </div>
+            <div id="login-logs-list">
+                </div>
         </div>
-    </div>
-
-    <div id="orders-tab" class="content-section">
-        <button onclick="clearOrders()" class="btn btn-del" style="width:100%; margin-bottom:20px;">مسح السجل</button>
-        <div id="orders-list"></div>
     </div>
 
     <div id="ticker-tab" class="content-section">
         <div class="card">
-            <h3>📢 شريط الإهداءات</h3>
-            <input type="text" id="ticker-text-input" style="width:100%; margin:10px 0;">
-            <input type="number" id="ticker-speed-input" placeholder="السرعة">
-            <button class="btn btn-save" style="width:100%; margin-top:10px;" onclick="saveTicker()">تحديث</button>
+            <h3 style="margin-bottom: 20px; color: var(--primary);">📢 إدارة شريط الإهداءات</h3>
+            <label>نص الشريط الحالي:</label>
+            <input type="text" id="ticker-text-input" style="width: 100%; margin: 10px 0 20px; padding: 15px;" placeholder="اكتب النص هنا...">
+            <label>سرعة الحركة (ثواني):</label>
+            <input type="number" id="ticker-speed-input" style="width: 100%; margin: 10px 0 20px; padding: 15px;">
+            <button class="btn btn-save" style="width: 100%; padding: 15px;" onclick="saveTickerSettings()">تحديث الشريط فوراً 🔥</button>
         </div>
+    </div>
+
+    <div id="orders-tab" class="content-section">
+        <button onclick="clearOrders()" class="btn btn-del" style="width:100%; margin-bottom:25px; padding:18px; border-radius: 20px; font-weight: 900;">
+            <i class="fas fa-trash-alt"></i> مسح سجل الطلبات بالكامل
+        </button>
+        <div id="orders-list"></div>
     </div>
 </div>
 
@@ -105,16 +160,24 @@
         messagingSenderId: "693047037412",
         appId: "1:693047037412:web:9d3f3ab7831ac35cd80bf1"
     };
+
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
     function checkAdmin() {
-        if(document.getElementById('adminPass').value === '0598787757') {
+        const pass = document.getElementById('adminPass').value;
+        if(pass === '10002000') {
+            sessionStorage.setItem('isBoss', 'true');
             document.getElementById('admin-login').style.display = 'none';
             document.getElementById('main-content').style.display = 'block';
-            loadData();
-        } else alert("غلط!");
+            startLiveUpdate();
+            loadTickerData();
+            cleanOldLogs(); // مسح تلقائي للقديم عند الدخول
+            listenToLogs(); // مراقبة سجل الدخول
+        } else { alert("الرمز غلط يا غالي"); }
     }
+
+    function adminLogout() { sessionStorage.clear(); location.reload(); }
 
     function showTab(id, btn) {
         document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
@@ -123,70 +186,145 @@
         btn.classList.add('active');
     }
 
-    function loadData() {
-        // تحميل الأسعار
-        db.ref('settings/prices').once('value').then(snap => {
-            const p = snap.val() || {};
-            document.getElementById('p_tt_f').value = p.tt_f || 5;
-            document.getElementById('p_tt_v').value = p.tt_v || 1;
-            document.getElementById('p_tt_l').value = p.tt_l || 0.5;
-            document.getElementById('p_ig_f').value = p.ig_f || 3;
-            document.getElementById('p_fb_f').value = p.fb_f || 4;
-            document.getElementById('p_yt_s').value = p.yt_s || 15;
-        });
+    // --- نظام سجل الدخول اللحظي (24 ساعة) ---
+    function listenToLogs() {
+        const now = Date.now();
+        const oneDayAgo = now - (24 * 60 * 60 * 1000);
 
-        // الرادار
-        db.ref('users').on('value', snap => {
+        db.ref('login_logs').orderByChild('timestamp').startAt(oneDayAgo).on('value', (snap) => {
             let html = "";
-            const users = snap.val();
-            for(let u in users) {
-                html += `<div class="card"><div class="flex-row"><span>👤 ${u}</span><span>💰 <input type="number" id="bal_${u}" value="${users[u].balance}" style="width:70px"></span><button class="btn btn-save" onclick="saveBal('${u}')">حفظ</button></div></div>`;
+            const logs = snap.val();
+            if(!logs) {
+                html = "<p style='text-align:center; color:#aaa;'>لا يوجد سجلات دخول حالية</p>";
+            } else {
+                const arr = Object.values(logs).reverse();
+                arr.forEach(log => {
+                    const date = new Date(log.timestamp).toLocaleString('ar-EG');
+                    html += `
+                        <div class="log-item">
+                            <span class="log-user">👤 ${log.user}</span>
+                            <span class="log-time">${date}</span>
+                        </div>
+                    `;
+                });
             }
-            document.getElementById('users-list').innerHTML = html;
+            document.getElementById('login-logs-list').innerHTML = html;
+        });
+    }
+
+    function cleanOldLogs() {
+        const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
+        db.ref('login_logs').orderByChild('timestamp').endAt(oneDayAgo).once('value', (snap) => {
+            snap.forEach((child) => {
+                child.ref.remove();
+            });
+        });
+    }
+
+    function clearLoginLogs() {
+        if(confirm("مسح كل سجل الدخول؟")) {
+            db.ref('login_logs').remove();
+        }
+    }
+    // ---------------------------------------
+
+    function startLiveUpdate() {
+        db.ref('users').on('value', (userSnap) => {
+            db.ref('status').on('value', (statusSnap) => {
+                const users = userSnap.val();
+                const statuses = statusSnap.val() || {};
+                let html = "";
+                
+                for(let u in users) {
+                    const isBanned = users[u].status === 'محظور';
+                    const userStatus = statuses[u] ? statuses[u].state : 'offline';
+                    const statusClass = userStatus === 'online' ? 'online' : 'offline';
+                    
+                    html += `
+                    <div class="card">
+                        <div class="flex-row">
+                            <span class="user-tag">
+                                <span class="status-dot ${statusClass}"></span>
+                                👤 ${u} 
+                                <small style="font-size:10px; color:#aaa;">(${userStatus})</small>
+                            </span>
+                            <select onchange="updateUserField('${u}', 'status', this.value)" style="border-color: ${isBanned ? 'var(--danger)' : 'var(--secondary)'}">
+                                <option value="نشط" ${!isBanned ? 'selected' : ''}>✅ نشط</option>
+                                <option value="محظور" ${isBanned ? 'selected' : ''}>🚫 حظر</option>
+                            </select>
+                        </div>
+                        <div class="controls flex-row">
+                            <span>💰 رصيد: <input type="number" id="bal_${u}" value="${users[u].balance}" style="width:80px"></span>
+                            <span>🔑 سر: <input type="text" id="pass_${u}" value="${users[u].password}" style="width:100px"></span>
+                            <div style="display:flex; gap:8px">
+                                <button class="btn btn-save" onclick="saveUserData('${u}')">حفظ</button>
+                                <button class="btn btn-del" onclick="deleteAccount('${u}')"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    </div>`;
+                }
+                document.getElementById('users-list').innerHTML = html;
+            });
         });
 
-        // الطلبات مع (ملغي)
-        db.ref('orders').on('value', snap => {
+        db.ref('orders').on('value', (snap) => {
             const orders = snap.val();
-            if(!orders) return;
-            let html = Object.values(orders).reverse().map(o => `
+            if(!orders) { document.getElementById('orders-list').innerHTML = `<div style="text-align:center; padding:40px; color:#aaa;">لا يوجد طلبات</div>`; return; }
+            const arr = Object.values(orders).reverse();
+            let html = arr.map(o => `
                 <div class="card">
-                    <b>${o.service}</b> - ${o.user}<br>
-                    <select id="st_${o.orderId}" style="width:100%; margin-top:10px;">
-                        <option value="قيد التنفيذ" ${o.status==='قيد التنفيذ'?'selected':''}>⏳ قيد التنفيذ</option>
-                        <option value="مكتمل" ${o.status==='مكتمل'?'selected':''}>✅ مكتمل</option>
-                        <option value="ملغي" ${o.status==='ملغي'?'selected':''}>❌ ملغي</option>
-                    </select>
-                    <button class="btn btn-save" style="width:100%; margin-top:5px;" onclick="updOrd('${o.user}','${o.orderId}')">تحديث الحالة</button>
-                </div>`).join('');
+                    <div class="flex-row"><b>${o.service}</b> <small>${o.date}</small></div>
+                    <div style="font-size:14px; margin:10px 0; background:#f9f9fc; padding:10px; border-radius:10px;">
+                        يوزر: ${o.user} | كمية: ${o.qty} <br>
+                        رابط: <a href="${o.link}" target="_blank">فتح الرابط</a>
+                    </div>
+                    <div class="flex-row">
+                        <select id="st_${o.orderId}" style="flex:1">
+                            <option value="قيد التنفيذ" ${o.status === 'قيد التنفيذ' ? 'selected' : ''}>⏳ قيد التنفيذ</option>
+                            <option value="مكتمل" ${o.status === 'مكتمل' ? 'selected' : ''}>✅ مكتمل</option>
+                            <option value="ملغي" ${o.status === 'ملغي' ? 'selected' : ''}>❌ ملغي</option>
+                        </select>
+                        <button class="btn btn-save" onclick="updateOrderStatus('${o.user}', '${o.orderId}')">تحديث</button>
+                    </div>
+                </div>
+            `).join('');
             document.getElementById('orders-list').innerHTML = html;
         });
     }
 
-    function saveAllPrices() {
-        const data = {
-            tt_f: document.getElementById('p_tt_f').value,
-            tt_v: document.getElementById('p_tt_v').value,
-            tt_l: document.getElementById('p_tt_l').value,
-            ig_f: document.getElementById('p_ig_f').value,
-            fb_f: document.getElementById('p_fb_f').value,
-            yt_s: document.getElementById('p_yt_s').value
-        };
-        db.ref('settings/prices').set(data).then(() => alert("تم حفظ الأسعار الـ 6 بنجاح!"));
+    function loadTickerData() {
+        db.ref('settings/ticker').once('value').then(snap => {
+            if(snap.exists()) {
+                document.getElementById('ticker-text-input').value = snap.val().text;
+                document.getElementById('ticker-speed-input').value = snap.val().speed;
+            }
+        });
     }
 
-    function saveBal(u) { db.ref('users/'+u).update({balance: parseFloat(document.getElementById('bal_'+u).value)}); alert("تم"); }
-    function updOrd(u, id) { 
-        const s = document.getElementById('st_'+id).value;
-        db.ref('orders/'+id).update({status:s});
-        db.ref('user_orders/'+u+'/'+id).update({status:s});
-        alert("تم تحديث الحالة");
+    function saveTickerSettings() {
+        const t = document.getElementById('ticker-text-input').value;
+        const s = document.getElementById('ticker-speed-input').value;
+        if(t && s) {
+            db.ref('settings/ticker').set({ text: t, speed: s })
+            .then(() => alert("✅ تم تحديث الشريط بنجاح!"));
+        } else { alert("عبّي البيانات يا قصي!"); }
     }
-    function saveTicker() {
-        db.ref('settings/ticker').set({text: document.getElementById('ticker-text-input').value, speed: document.getElementById('ticker-speed-input').value});
-        alert("تم");
+
+    function saveUserData(u) {
+        const b = parseFloat(document.getElementById('bal_'+u).value);
+        const p = document.getElementById('pass_'+u).value;
+        db.ref('users/' + u).update({ balance: b, password: p }).then(() => alert("تم حفظ " + u));
     }
-    function clearOrders() { if(confirm("أكيد؟")) { db.ref('orders').remove(); db.ref('user_orders').remove(); } }
+    function updateUserField(u, field, val) { db.ref('users/' + u).update({ [field]: val }); }
+    function deleteAccount(u) { if(confirm("أكيد بدك تمسح " + u + "؟")) db.ref('users/' + u).remove(); }
+    function updateOrderStatus(u, id) {
+        const s = document.getElementById('st_' + id).value;
+        db.ref('orders/' + id).update({status: s});
+        db.ref('user_orders/' + u + '/' + id).update({status: s});
+        alert("تم تحديث حالة الطلب");
+    }
+    function clearOrders() { if(confirm("مسح كل السجل؟")) { db.ref('orders').remove(); db.ref('user_orders').remove(); } }
 </script>
 </body>
 </html>
+
