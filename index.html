@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>عالم المصيبة | تسجيل الدخول</title>
+    <title>بوابة عالم المصيبة | الماركت الأقوى</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
@@ -14,129 +14,191 @@
         :root {
             --primary: #6c5ce7;
             --secondary: #a29bfe;
-            --accent: #ff7675;
-            --bg: #f8f9fd;
+            --dark: #0f0c29;
             --white: #ffffff;
+            --gold: #f1c40f;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Tajawal', sans-serif;
-            background-color: var(--bg);
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
             overflow: hidden;
+            color: white;
         }
 
-        /* لودر العمليات بلمسة فخمة */
+        /* لودر الدعاء الفخم */
         #loader {
             display: none; position: fixed; inset: 0;
-            background: rgba(255, 255, 255, 0.95); z-index: 9999;
+            background: rgba(15, 12, 41, 0.98); z-index: 10000;
             flex-direction: column; justify-content: center; align-items: center;
+            backdrop-filter: blur(15px);
+        }
+
+        /* لوجو عالم المصيبة */
+        .main-logo {
+            text-align: center; margin-bottom: 40px;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        .main-logo h1 {
+            font-size: 45px; font-weight: 900;
+            background: linear-gradient(to bottom, #fff, #a29bfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 10px 30px rgba(108, 92, 231, 0.5);
+        }
+
+        /* حاوية الخيارات */
+        .portal-container {
+            display: flex; flex-direction: column; gap: 15px;
+            width: 100%; max-width: 400px;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        .portal-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px; border-radius: 25px;
+            display: flex; align-items: center; gap: 20px;
+            cursor: pointer; transition: 0.4s;
             backdrop-filter: blur(10px);
         }
 
-        .dua-container {
-            text-align: center; background: var(--white);
-            padding: 30px; border-radius: 30px;
-            box-shadow: 0 15px 35px rgba(108, 92, 231, 0.1);
-            border: 1px solid rgba(108, 92, 231, 0.1);
+        .portal-card:hover {
+            background: rgba(108, 92, 231, 0.2);
+            transform: scale(1.05);
+            border-color: var(--primary);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
         }
 
+        .icon-box {
+            width: 60px; height: 60px; border-radius: 18px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; color: white;
+        }
+
+        .member-bg { background: linear-gradient(45deg, #6c5ce7, #a29bfe); }
+        .admin-bg { background: linear-gradient(45deg, #00b894, #55efc4); }
+        .boss-bg { background: linear-gradient(45deg, #f1c40f, #f39c12); box-shadow: 0 0 15px rgba(241, 196, 15, 0.4); }
+
+        .card-text h3 { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+        .card-text p { font-size: 12px; opacity: 0.7; }
+
+        /* شاشة الدخول العادية */
         .auth-card {
-            background: var(--white);
-            padding: 45px 30px; border-radius: 35px; width: 100%;
+            background: var(--white); color: #333;
+            padding: 40px 30px; border-radius: 35px; width: 100%;
             max-width: 400px; text-align: center;
-            box-shadow: 0 25px 50px rgba(108, 92, 231, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            animation: fadeIn 0.6s ease-out;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            display: none; position: relative;
         }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        h2 {
-            font-weight: 900; font-size: 28px; margin-bottom: 30px;
-            color: var(--primary);
+        .back-btn {
+            position: absolute; top: 20px; right: 20px;
+            color: var(--primary); cursor: pointer; font-size: 20px;
         }
 
-        .input-group { margin-bottom: 15px; position: relative; }
-        
         input {
-            width: 100%; padding: 16px 20px; border-radius: 18px;
+            width: 100%; padding: 16px; border-radius: 18px;
             border: 2px solid #f1f1f1; background: #fafafa;
-            color: #2d3436; text-align: center;
-            font-family: 'Tajawal'; font-size: 16px; outline: none;
-            transition: 0.3s;
+            color: #2d3436; text-align: center; margin-bottom: 12px;
+            font-family: 'Tajawal'; font-size: 16px; outline: none; transition: 0.3s;
         }
-        input:focus { border-color: var(--primary); background: var(--white); }
+        input:focus { border-color: var(--primary); }
 
-        button {
+        .btn-main {
             width: 100%; padding: 16px; border-radius: 18px; border: none;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white; font-weight: 700; font-size: 18px; cursor: pointer;
-            transition: 0.3s; box-shadow: 0 10px 20px rgba(108, 92, 231, 0.2);
-            margin-top: 10px;
+            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.2);
         }
-        button:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(108, 92, 231, 0.3); }
 
-        .toggle-btn { margin-top: 25px; font-size: 14px; color: #b2bec3; }
-        .toggle-btn b { color: var(--primary); cursor: pointer; text-decoration: underline; }
+        @keyframes glow { from { filter: drop-shadow(0 0 5px rgba(108,92,231,0.4)); } to { filter: drop-shadow(0 0 20px rgba(108,92,231,0.8)); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-        .progress-bar {
-            width: 200px; height: 4px; background: #eee;
-            border-radius: 10px; margin-top: 20px; overflow: hidden;
+        .dua-box {
+            background: white; padding: 25px; border-radius: 25px; text-align: center; color: #333;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
         }
-        .progress-line {
-            width: 100%; height: 100%; background: var(--primary);
-            animation: loading 2s infinite;
-        }
+        .progress-bar { width: 200px; height: 4px; background: #eee; border-radius: 10px; margin-top: 15px; overflow: hidden; }
+        .progress-line { width: 100%; height: 100%; background: var(--primary); animation: loading 2s infinite; }
         @keyframes loading { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
     </style>
 </head>
 <body>
 
     <div id="loader">
-        <div class="dua-container">
-            <h3 style="color: var(--primary); margin-bottom: 10px; font-size: 22px; font-weight: 900;">قُصي وورده ❤️</h3>
-            <p style="font-size: 13px; color: #636e72;">اللهم اجمع بينهم بالخير والحلال قريباً</p>
+        <div class="dua-box">
+            <h3 style="color: var(--primary); font-weight: 900;">قُصي وورده ❤️</h3>
+            <p style="font-size: 12px; margin-top: 5px;">اللهم اجمع بينهم بالخير والحلال قريباً</p>
             <div class="progress-bar"><div class="progress-line"></div></div>
         </div>
     </div>
 
-    <div class="auth-card" id="login-box">
-        <div style="font-size: 50px; margin-bottom: 15px;">🔒</div>
-        <h2>عالم المصيبة</h2>
-        <div class="input-group">
-            <input type="text" id="user" placeholder="اسم المستخدم" autocomplete="off">
+    <div id="portal-view">
+        <div class="main-logo">
+            <i class="fas fa-bolt" style="color: var(--gold); font-size: 40px; margin-bottom: 10px;"></i>
+            <h1>عالم المصيبة</h1>
+            <p style="opacity: 0.6; font-size: 14px; letter-spacing: 2px;">ALMUSAIBI MARKET</p>
         </div>
-        <div class="input-group">
-            <input type="password" id="pass" placeholder="كلمة المرور">
+
+        <div class="portal-container">
+            <div class="portal-card" onclick="openLogin()">
+                <div class="icon-box member-bg"><i class="fas fa-users"></i></div>
+                <div class="card-text">
+                    <h3>منطقة الأعضاء</h3>
+                    <p>تسجيل دخول أو إنشاء حساب جديد</p>
+                </div>
+            </div>
+
+            <div class="portal-card" onclick="window.location.href='orders-admin.html'">
+                <div class="icon-box admin-bg"><i class="fas fa-tasks"></i></div>
+                <div class="card-text">
+                    <h3>إدارة الطلبات</h3>
+                    <p>خاص بمشرفي الخدمات والطلبات</p>
+                </div>
+            </div>
+
+            <div class="portal-card" onclick="window.location.href='admin.html'">
+                <div class="icon-box boss-bg"><i class="fas fa-crown"></i></div>
+                <div class="card-text">
+                    <h3>غرفة العمليات</h3>
+                    <p>الإدارة العليا والتحكم الكامل</p>
+                </div>
+            </div>
         </div>
-        <button onclick="executeLogin()">دخول آمن 🛡️</button>
-        <div class="toggle-btn">ليس لديك حساب؟ <b onclick="toggle(true)">أنشئ حساباً جديداً</b></div>
+        
+        <p style="text-align: center; margin-top: 30px; font-size: 11px; opacity: 0.4;">جميع الحقوق محفوظة لصالح إسحاق الشقي 2026</p>
     </div>
 
-    <div class="auth-card" id="reg-box" style="display:none;">
-        <div style="font-size: 50px; margin-bottom: 15px;">✨</div>
-        <h2>انضم إلينا</h2>
-        <div class="input-group">
-            <input type="text" id="reg-user" placeholder="اسم المستخدم الجديد">
+    <div class="auth-card" id="login-view">
+        <i class="fas fa-arrow-left back-btn" onclick="goBack()"></i>
+        <h2 style="color: var(--primary); font-weight: 900; margin-bottom: 20px;">تسجيل دخول</h2>
+        <input type="text" id="user" placeholder="اسم المستخدم">
+        <input type="password" id="pass" placeholder="كلمة المرور">
+        <button class="btn-main" onclick="executeLogin()">دخول آمن 🛡️</button>
+        <div style="margin-top: 20px; font-size: 13px;" id="toggle-text">
+            ليس لديك حساب؟ <b style="color:var(--primary); cursor:pointer;" onclick="showReg()">أنشئ حساباً</b>
         </div>
-        <div class="input-group">
-            <input type="email" id="reg-email" placeholder="البريد الإلكتروني">
-        </div>
-        <div class="input-group">
-            <input type="password" id="reg-pass" placeholder="اختر كلمة مرور">
-        </div>
-        <button onclick="executeRegister()">تأكيد التسجيل</button>
-        <div class="toggle-btn">لديك حساب بالفعل؟ <b onclick="toggle(false)">سجل دخولك</b></div>
+    </div>
+
+    <div class="auth-card" id="reg-view">
+        <i class="fas fa-arrow-left back-btn" onclick="goBack()"></i>
+        <h2 style="color: var(--primary); font-weight: 900; margin-bottom: 20px;">حساب جديد</h2>
+        <input type="text" id="reg-user" placeholder="اسم المستخدم">
+        <input type="email" id="reg-email" placeholder="البريد الإلكتروني">
+        <input type="password" id="reg-pass" placeholder="كلمة المرور">
+        <button class="btn-main" onclick="executeRegister()">تأكيد التسجيل</button>
     </div>
 
     <script>
+        // إعدادات الفايربيز
         const firebaseConfig = {
             apiKey: "AIzaSyDH4h6Dg1DM9xGLc8x7mUaqnVICBf6HnNk",
             authDomain: "al-musaiba.firebaseapp.com",
@@ -146,41 +208,45 @@
             messagingSenderId: "693047037412",
             appId: "1:693047037412:web:9d3f3ab7831ac35cd80bf1"
         };
-
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        function toggle(isReg) {
-            document.getElementById('login-box').style.display = isReg ? 'none' : 'block';
-            document.getElementById('reg-box').style.display = isReg ? 'block' : 'none';
+        // دوال التنقل
+        function openLogin() {
+            document.getElementById('portal-view').style.display = 'none';
+            document.getElementById('login-view').style.display = 'block';
+        }
+        function showReg() {
+            document.getElementById('login-view').style.display = 'none';
+            document.getElementById('reg-view').style.display = 'block';
+        }
+        function goBack() {
+            document.getElementById('login-view').style.display = 'none';
+            document.getElementById('reg-view').style.display = 'none';
+            document.getElementById('portal-view').style.display = 'block';
         }
 
+        // منطق تسجيل الدخول
         function executeLogin() {
             const u = document.getElementById('user').value.trim().toLowerCase();
             const p = document.getElementById('pass').value.trim();
-
-            if(!u || !p) return alert("يرجى إدخال كافة البيانات!");
+            if(!u || !p) return alert("عبّي بياناتك يا غالي");
             
             document.getElementById('loader').style.display = 'flex';
-
-            database.ref('users/' + u).once('value').then((snapshot) => {
-                const userData = snapshot.val();
-                if (userData && userData.password === p) {
-                    if (userData.status === "محظور") {
-                        alert("⚠️ حسابك محظور من قبل الإدارة");
+            database.ref('users/' + u).once('value').then((snap) => {
+                const data = snap.val();
+                if (data && data.password === p) {
+                    if (data.status === "محظور") {
+                        alert("⚠️ حسابك محظور!");
                         location.reload();
                     } else {
                         localStorage.setItem('user', u);
-                        // تأكد أن هذا الاسم يطابق اسم ملف الخدمات لديك
                         window.location.href = "services.html";
                     }
                 } else {
-                    alert("❌ خطأ في اسم المستخدم أو كلمة المرور");
+                    alert("❌ الاسم أو السر غلط");
                     document.getElementById('loader').style.display = 'none';
                 }
-            }).catch(() => {
-                alert("⚠️ مشكلة في الاتصال بالشبكة");
-                document.getElementById('loader').style.display = 'none';
             });
         }
 
@@ -188,21 +254,19 @@
             const u = document.getElementById('reg-user').value.trim().toLowerCase();
             const e = document.getElementById('reg-email').value.trim();
             const p = document.getElementById('reg-pass').value.trim();
+            if(!u || !e || !p) return alert("كل الخانات مطلوبة");
 
-            if(!u || !e || !p) return alert("يرجى إكمال البيانات!");
-            
             document.getElementById('loader').style.display = 'flex';
-
-            database.ref('users/' + u).once('value').then((snapshot) => {
-                if (snapshot.exists()) {
-                    alert("❌ هذا الاسم محجوز بالفعل");
+            database.ref('users/' + u).once('value').then((snap) => {
+                if (snap.exists()) {
+                    alert("❌ الاسم مستخدم من قبل");
                     document.getElementById('loader').style.display = 'none';
                 } else {
                     database.ref('users/' + u).set({
                         username: u, email: e, password: p, balance: 0,
                         status: "نشط", joinDate: new Date().toISOString()
                     }).then(() => {
-                        alert("✅ تم إنشاء الحساب بنجاح!");
+                        alert("✅ مبروك الحساب الجديد");
                         location.reload();
                     });
                 }
