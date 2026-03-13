@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>عالم المصيبة | تأكيد الطلب</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
@@ -13,94 +13,96 @@
     <style>
         :root {
             --primary: #6c5ce7;
-            --secondary: #00cec9;
-            --accent: #e84393;
-            --bg: #0a0a0c;
-            --card-bg: rgba(255, 255, 255, 0.04);
+            --secondary: #a29bfe;
+            --accent: #ff7675;
+            --bg: #f8f9fd;
+            --white: #ffffff;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Tajawal', sans-serif;
-            background: radial-gradient(circle at center, #1e1e2f 0%, #0a0a0c 100%);
+            background-color: var(--bg);
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            color: white;
+            color: #2d3436;
             overflow: hidden;
             padding: 20px;
         }
 
         .order-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(25px);
-            padding: 50px 40px;
+            background: var(--white);
+            padding: 45px 30px;
             border-radius: 40px;
             width: 100%;
             max-width: 450px;
             text-align: center;
-            border: 1px solid rgba(255,255,255,0.08);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
-            animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+            border: 1px solid rgba(255,255,255,0.8);
+            box-shadow: 0 25px 50px rgba(108, 92, 231, 0.08);
+            animation: fadeInUp 0.7s ease-out;
         }
 
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         .service-badge { 
-            background: rgba(108, 92, 231, 0.15); 
-            color: var(--secondary); 
-            padding: 10px 20px; 
-            border-radius: 15px; 
-            font-weight: 900; 
+            background: #f0eeff; 
+            color: var(--primary); 
+            padding: 12px 25px; 
+            border-radius: 50px; 
+            font-weight: 800; 
             font-size: 15px; 
             margin-bottom: 25px; 
             display: inline-block;
-            border: 1px solid rgba(0, 206, 201, 0.2);
+            border: 1px solid rgba(108, 92, 231, 0.1);
         }
 
-        h2 { font-weight: 900; font-size: 26px; margin-bottom: 30px; }
+        h2 { font-weight: 900; font-size: 24px; margin-bottom: 30px; color: #2d3436; }
 
         .input-group { margin-bottom: 20px; position: relative; }
         
         input {
             width: 100%; padding: 18px; border-radius: 20px; 
-            border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(255,255,255,0.06); 
-            color: white; text-align: center;
-            font-family: 'Tajawal'; font-size: 16px; transition: 0.4s;
+            border: 2px solid #f1f1f1;
+            background: #fafafa; 
+            color: #2d3436; text-align: center;
+            font-family: 'Tajawal'; font-size: 16px; transition: 0.3s;
             outline: none;
         }
         
-        input:focus { border-color: var(--primary); background: rgba(255,255,255,0.12); }
+        input:focus { border-color: var(--primary); background: var(--white); }
 
         button {
             width: 100%; padding: 18px; border-radius: 20px; border: none;
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white; font-weight: 900; font-size: 19px; cursor: pointer;
             transition: 0.4s; margin-top: 10px;
-            box-shadow: 0 10px 25px rgba(108, 92, 231, 0.3);
+            box-shadow: 0 10px 25px rgba(108, 92, 231, 0.2);
         }
 
-        button:hover { transform: translateY(-5px); filter: brightness(1.1); }
+        button:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(108, 92, 231, 0.3); }
         button:disabled { opacity: 0.6; cursor: not-allowed; }
 
         .back-link { 
             display: inline-block; margin-top: 25px; 
-            color: #aaa; text-decoration: none; 
+            color: #b2bec3; text-decoration: none; 
             font-size: 14px; transition: 0.3s;
             font-weight: 700;
         }
-        .back-link:hover { color: var(--secondary); }
+        .back-link:hover { color: var(--primary); }
+        
+        .icon-box { font-size: 40px; margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
     <div class="order-card">
+        <div class="icon-box">🚀</div>
         <div id="service-name" class="service-badge">جاري جلب الخدمة...</div>
         <h2>أكمل تفاصيل طلبك</h2>
         
@@ -122,7 +124,6 @@
     </div>
 
     <script>
-        // إعدادات الفايربيز
         const firebaseConfig = {
             apiKey: "AIzaSyDH4h6Dg1DM9xGLc8x7mUaqnVICBf6HnNk",
             authDomain: "al-musaiba.firebaseapp.com",
@@ -142,7 +143,6 @@
         if(!service) window.location.href = "services.html";
         document.getElementById('service-name').innerText = "الخدمة: " + service;
 
-        // خريطة الأسعار (لكل 1000 قطعة)
         const prices = {
             "متابعين تيك توك": 5,
             "مشاهدات تيك توك": 0.1,
@@ -164,11 +164,9 @@
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري فحص الرصيد...';
 
-            // 1. حساب السعر
             const pricePerThousand = prices[service] || 0;
             const totalCost = (pricePerThousand / 1000) * qtyValue;
 
-            // 2. جلب رصيد المستخدم الحالي
             database.ref('users/' + user).once('value').then((snapshot) => {
                 const userData = snapshot.val();
                 const currentBalance = userData.balance || 0;
@@ -178,7 +176,6 @@
                     btn.disabled = false;
                     btn.innerHTML = '<i class="fas fa-check-circle"></i> تأكيد وإرسال';
                 } else {
-                    // 3. خصم الرصيد وتسجيل الطلب
                     const newBalance = currentBalance - totalCost;
                     const orderId = Date.now();
 
