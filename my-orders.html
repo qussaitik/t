@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>طلباتي | عالم المصيبة</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
@@ -13,11 +13,11 @@
     <style>
         :root { 
             --primary: #6c5ce7; 
-            --secondary: #00cec9;
-            --bg: #0a0a0c; 
-            --card-bg: rgba(255, 255, 255, 0.04);
+            --secondary: #a29bfe;
+            --bg: #f8f9fd; 
+            --white: #ffffff;
             --success: #00b894; 
-            --danger: #d63031; 
+            --danger: #ff7675; 
             --warning: #fdcb6e; 
         }
 
@@ -25,9 +25,9 @@
 
         body { 
             font-family: 'Tajawal', sans-serif; 
-            background: radial-gradient(circle at center, #1e1e2f 0%, #0a0a0c 100%);
+            background-color: var(--bg);
             min-height: 100vh;
-            color: white; 
+            color: #2d3436; 
             padding: 25px 15px;
         }
 
@@ -40,49 +40,50 @@
             margin-bottom: 30px; padding: 0 10px;
         }
         
-        .header h1 { font-weight: 900; font-size: 24px; color: var(--secondary); text-shadow: 0 0 15px rgba(0,206,201,0.2); }
+        .header h1 { font-weight: 900; font-size: 24px; color: var(--primary); }
         
         .back-btn {
-            background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
-            color: white; padding: 10px 18px; border-radius: 15px; 
+            background: var(--white); border: 1px solid rgba(108, 92, 231, 0.1);
+            color: var(--primary); padding: 10px 18px; border-radius: 15px; 
             text-decoration: none; font-size: 14px; font-weight: 700; transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.05);
         }
-        .back-btn:hover { background: var(--primary); transform: translateX(-5px); }
+        .back-btn:hover { background: var(--primary); color: white; transform: translateX(-5px); }
 
         .order-card { 
-            background: var(--card-bg); 
-            backdrop-filter: blur(20px);
+            background: var(--white); 
             padding: 22px; border-radius: 28px; 
-            margin-bottom: 18px; border: 1px solid rgba(255,255,255,0.08); 
+            margin-bottom: 18px; border: 1px solid rgba(255, 255, 255, 0.8); 
+            box-shadow: 0 10px 25px rgba(108, 92, 231, 0.05);
             transition: 0.4s; position: relative; overflow: hidden;
         }
-        .order-card:hover { transform: scale(1.02); border-color: var(--primary); }
+        .order-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(108, 92, 231, 0.1); }
 
         .order-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
-        .service-name { font-weight: 900; font-size: 17px; color: white; display: block; }
-        .order-date { font-size: 11px; color: #aaa; font-weight: 400; margin-top: 4px; display: block; }
+        .service-name { font-weight: 900; font-size: 17px; color: #2d3436; display: block; }
+        .order-date { font-size: 11px; color: #b2bec3; font-weight: 400; margin-top: 4px; display: block; }
 
-        .order-info { font-size: 14px; color: #ccc; margin-bottom: 15px; display: flex; gap: 15px; flex-wrap: wrap; }
-        .info-item b { color: var(--secondary); }
+        .order-info { font-size: 14px; color: #636e72; margin-bottom: 5px; display: flex; gap: 20px; flex-wrap: wrap; }
+        .info-item b { color: var(--primary); font-weight: 700; }
 
         .status-badge { 
             display: inline-flex; align-items: center; gap: 6px;
-            padding: 6px 14px; border-radius: 12px; font-weight: 800; font-size: 12px; 
+            padding: 7px 14px; border-radius: 12px; font-weight: 800; font-size: 12px; 
         }
         
-        .st-pending { background: rgba(253, 203, 110, 0.1); color: var(--warning); border: 1px solid rgba(253, 203, 110, 0.2); }
-        .st-completed { background: rgba(0, 184, 148, 0.1); color: var(--success); border: 1px solid rgba(0, 184, 148, 0.2); }
-        .st-cancelled { background: rgba(214, 48, 49, 0.1); color: var(--danger); border: 1px solid rgba(214, 48, 49, 0.2); }
+        .st-pending { background: #fff9eb; color: var(--warning); border: 1px solid rgba(253, 203, 110, 0.2); }
+        .st-completed { background: #e6fffb; color: var(--success); border: 1px solid rgba(0, 184, 148, 0.2); }
+        .st-cancelled { background: #fff1f0; color: var(--danger); border: 1px solid rgba(255, 118, 117, 0.2); }
 
         .no-orders { 
             text-align: center; padding: 60px 20px; 
-            background: var(--card-bg); backdrop-filter: blur(15px);
-            border-radius: 35px; border: 1px dashed rgba(255,255,255,0.1);
-            color: #aaa; font-weight: 700; 
+            background: var(--white);
+            border-radius: 35px; border: 1px dashed rgba(108, 92, 231, 0.2);
+            color: #b2bec3; font-weight: 700; 
         }
         
         .loader-spinner {
-            border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid var(--secondary);
+            border: 4px solid #f1f1f1; border-top: 4px solid var(--primary);
             border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite;
             margin: 50px auto;
         }
@@ -94,7 +95,7 @@
 <div class="container">
     <div class="header">
         <h1>📦 سجل طلباتي</h1>
-        <a href="services.html" class="back-btn"><i class="fas fa-chevron-right"></i> رجوع</a>
+        <a href="services.html" class="back-btn">رجوع <i class="fas fa-chevron-left"></i></a>
     </div>
 
     <div id="orders-list">
@@ -103,7 +104,6 @@
 </div>
 
 <script>
-    // إعدادات الفايربيز
     const firebaseConfig = {
         apiKey: "AIzaSyDH4h6Dg1DM9xGLc8x7mUaqnVICBf6HnNk",
         authDomain: "al-musaiba.firebaseapp.com",
@@ -124,17 +124,15 @@
             return;
         }
 
-        // الاستماع للطلبات الخاصة بالمستخدم فقط (Realtime)
         database.ref('user_orders/' + storedUser).on('value', (snapshot) => {
             const data = snapshot.val();
             const ordersList = document.getElementById('orders-list');
             
             if (!data) {
-                ordersList.innerHTML = `<div class="no-orders"><i class="fas fa-ghost" style="font-size:40px; margin-bottom:15px; display:block;"></i>لا يوجد طلبات سابقة</div>`;
+                ordersList.innerHTML = `<div class="no-orders"><i class="fas fa-box-open" style="font-size:40px; margin-bottom:15px; display:block; color: #eee;"></i>لا يوجد طلبات سابقة</div>`;
                 return;
             }
 
-            // تحويل الكائن إلى مصفوفة وترتيبها من الأحدث للأقدم
             const ordersArray = Object.values(data).reverse();
             let html = "";
 
@@ -144,14 +142,14 @@
                 let status = o.status || "قيد التنفيذ";
 
                 if (status === "مكتمل") { stClass = "st-completed"; icon = "fa-check-circle"; }
-                else if (status === "ملغي") { stClass = "st-cancelled"; icon = "fa-times-circle"; }
+                else if (status === "ملغي" || status === "فشل") { stClass = "st-cancelled"; icon = "fa-times-circle"; }
 
                 html += `
                     <div class="order-card">
                         <div class="order-header">
                             <div>
                                 <span class="service-name">${o.service}</span>
-                                <span class="order-date">${o.date}</span>
+                                <span class="order-date"><i class="far fa-calendar-alt"></i> ${o.date}</span>
                             </div>
                             <div class="status-badge ${stClass}">
                                 <i class="fas ${icon}"></i> ${status}
@@ -159,7 +157,7 @@
                         </div>
                         <div class="order-info">
                             <div class="info-item">الكمية: <b>${o.qty}</b></div>
-                            <div class="info-item">التكلفة: <b>$${parseFloat(o.cost).toFixed(3)}</b></div>
+                            <div class="info-item">التكلفة: <b>$${parseFloat(o.cost || 0).toFixed(3)}</b></div>
                         </div>
                     </div>`;
             });
@@ -169,7 +167,6 @@
         });
     }
 
-    // تشغيل الدالة
     loadOrders();
 </script>
 </body>
