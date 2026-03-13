@@ -6,6 +6,10 @@
     <title>إدارة الطلبات | عالم المصيبة</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
     <style>
         :root { 
             --primary: #6c5ce7; 
@@ -44,7 +48,7 @@
             color: white; font-weight: 900; cursor: pointer;
         }
 
-        /* محتوى الصفحة الرئيسي (مخفي بالبداية) */
+        /* محتوى الصفحة الرئيسي */
         #main-content { display: none; max-width: 800px; margin: 20px auto; animation: fadeIn 0.6s ease; }
         
         header { text-align: center; margin-bottom: 30px; }
@@ -97,9 +101,21 @@
 </div>
 
 <script>
-    const url = "https://script.google.com/macros/s/AKfycbz6aom1YkRybiFj9-N2XjRYK_HNlvo6Pa1elrjVy_MbviAlI9yljCovX5_j7X00je-r/exec";
+    // إعدادات الفايربيز الخاصة بك
+    const firebaseConfig = {
+        apiKey: "AIzaSyDH4h6Dg1DM9xGLc8x7mUaqnVICBf6HnNk",
+        authDomain: "al-musaiba.firebaseapp.com",
+        databaseURL: "https://al-musaiba-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "al-musaiba",
+        storageBucket: "al-musaiba.firebasestorage.app",
+        messagingSenderId: "693047037412",
+        appId: "1:693047037412:web:9d3f3ab7831ac35cd80bf1"
+    };
 
-    // دالة فحص الباسوورد
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    // دالة فحص الباسوورد (الأصلي)
     function verifyPass() {
         const pass = document.getElementById('passInput').value;
         if (pass === '998877') {
@@ -111,17 +127,21 @@
         }
     }
 
-    async function loadOrders() {
+    // جلب الطلبات من الفايربيز
+    function loadOrders() {
         const list = document.getElementById('orders-list');
-        list.innerHTML = '<p style="text-align:center;">جاري التحميل...</p>';
+        list.innerHTML = '<p style="text-align:center;">جاري جلب الطلبات...</p>';
 
-        try {
-            const response = await fetch(url + "?action=getOrders");
-            const orders = await response.json();
-            const reversedOrders = orders.reverse();
+        database.ref('orders').on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (!data) {
+                list.innerHTML = '<p style="text-align:center;">لا يوجد طلبات حالياً</p>';
+                return;
+            }
 
+            const ordersArray = Object.values(data).reverse();
             let html = "";
-            reversedOrders.forEach((o, i) => {
+            ordersArray.forEach((o) => {
                 html += `
                     <div class="order-card">
                         <div class="flex-row">
@@ -134,32 +154,31 @@
                             الرابط: <a href="${o.link}" target="_blank" class="order-link">${o.link}</a>
                         </div>
                         <div class="flex-row">
-                            <select id="status_${i}">
-                                <option value="قيد المعالجة" ${o.status === 'قيد المعالجة' ? 'selected' : ''}>⏳ معالجة</option>
+                            <select id="status_${o.orderId}">
+                                <option value="قيد التنفيذ" ${o.status === 'قيد التنفيذ' ? 'selected' : ''}>⏳ قيد التنفيذ</option>
                                 <option value="مكتمل" ${o.status === 'مكتمل' ? 'selected' : ''}>✅ مكتمل</option>
                                 <option value="ملغي" ${o.status === 'ملغي' ? 'selected' : ''}>❌ ملغي</option>
                             </select>
-                            <button class="btn-update" onclick="updateStatus('${o.user}','${o.date}','status_${i}')">حفظ</button>
+                            <button class="btn-update" onclick="updateStatus('${o.user}','${o.orderId}')">حفظ</button>
                         </div>
                     </div>`;
             });
-            list.innerHTML = html || '<p style="text-align:center;">لا يوجد طلبات</p>';
-        } catch (e) {
-            list.innerHTML = '<p style="text-align:center; color:red;">خطأ في الاتصال</p>';
-        }
+            list.innerHTML = html;
+        });
     }
 
-    async function updateStatus(user, date, selectId) {
-        const status = document.getElementById(selectId).value;
-        try {
-            await fetch(url, { 
-                method: "POST", 
-                body: JSON.stringify({ action: "updateOrderStatus", user: user, date: date, status: status }) 
-            });
-            alert("تم التحديث بنجاح ✅");
-        } catch (e) {
+    // تحديث الحالة في الفايربيز (للمشرف وللمستخدم)
+    function updateStatus(user, orderId) {
+        const status = document.getElementById('status_' + orderId).value;
+        const updates = {};
+        updates['/orders/' + orderId + '/status'] = status;
+        updates['/user_orders/' + user + '/' + orderId + '/status'] = status;
+
+        database.ref().update(updates).then(() => {
+            alert("تم تحديث الحالة بنجاح ✅");
+        }).catch(() => {
             alert("حدث خطأ ❌");
-        }
+        });
     }
 </script>
 </body>
