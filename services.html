@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>عالم المصيبة | واجهة الخدمات المطورة</title>
+    <title>عالم المصيبة | الواجهة المطورة</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
@@ -12,200 +12,207 @@
 
     <style>
         :root {
-            --primary: #5f27cd;
-            --secondary: #00d2d3;
-            --accent: #ff9f43;
-            --love: #ff6b6b;
-            --bg: #fcfcfd;
-            --card-shadow: 0 10px 25px rgba(0,0,0,0.04);
+            --main-purple: #6c5ce7;
+            --soft-bg: #fdfdff;
+            --heart-color: #ff7675;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Cairo', sans-serif;
-            background-color: var(--bg);
-            color: #2d3436;
+            background: var(--soft-bg);
             direction: rtl;
         }
 
-        /* لودر احترافي */
-        #loader {
-            position: fixed; inset: 0; background: #fff;
-            display: flex; justify-content: center; align-items: center; z-index: 10000;
-        }
-        .spinner { width: 40px; height: 40px; border: 3px solid #f3f3f3; border-top: 3px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        .header-section {
+        /* الهيدر المطور - الاسم عاليمين والقلوب معه */
+        .top-header {
             background: #fff;
             padding: 25px 20px;
-            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             border-bottom: 1px solid #f1f1f1;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
         }
 
-        .welcome-msg { font-size: 14px; color: #888; }
-        .user-display { 
-            display: flex; align-items: center; justify-content: center; 
-            gap: 10px; margin-top: 8px; 
+        .user-right {
+            display: flex;
+            flex-direction: column;
+            text-align: right;
         }
-        .user-display b { font-size: 24px; color: var(--primary); font-weight: 900; }
-        .heart { color: var(--love); font-size: 18px; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
 
-        .logout-btn { position: absolute; top: 20px; left: 20px; color: #ccc; font-size: 20px; cursor: pointer; }
+        .welcome-txt { font-size: 13px; color: #b2bec3; }
+        
+        .name-heart-area {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 2px;
+        }
 
-        /* منطقة الأزرار العلوية - شبكة 2x2 متساوية */
-        .top-grid {
+        .name-heart-area b {
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--main-purple);
+        }
+
+        .fa-heart {
+            color: var(--heart-color);
+            font-size: 16px;
+            animation: beat 1.5s infinite;
+        }
+
+        @keyframes beat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        .logout-left i {
+            font-size: 24px;
+            color: #dcdde1;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .logout-left i:hover { color: var(--heart-color); }
+
+        /* الأزرار العلوية */
+        .nav-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1.1fr 1fr;
             gap: 12px;
             padding: 20px;
-            max-width: 500px;
+            max-width: 600px;
             margin: auto;
         }
 
-        .nav-box {
+        .nav-card {
             background: #fff;
-            padding: 18px;
+            padding: 16px;
             border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            font-size: 14px;
-            font-weight: 700;
-            border: 1px solid #f1f1f1;
-            box-shadow: var(--card-shadow);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.01);
             cursor: pointer;
-            transition: 0.3s;
         }
-        .nav-box:hover { transform: translateY(-3px); border-color: var(--primary); }
 
-        /* زر الرصيد - تم إصلاحه ليكون بنفس الحجم */
-        .balance-box {
-            background: linear-gradient(135deg, var(--primary), #8257e5);
-            color: #fff;
-            border: none;
+        /* زر الرصيد الأنيق */
+        .balance-card {
+            background: linear-gradient(135deg, #6c5ce7, #8e44ad);
+            color: white;
             flex-direction: column;
-            gap: 2px;
+            border: none;
+            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.25);
         }
-        .balance-box small { font-size: 10px; opacity: 0.8; font-weight: 400; }
-        .balance-box span { font-size: 16px; font-weight: 900; }
+        .balance-card small { font-size: 11px; opacity: 0.85; }
+        .balance-card span { font-size: 18px; font-weight: 900; }
 
-        /* شبكة الخدمات - كل ثنتين سوا */
-        .services-title { padding: 10px 25px; font-weight: 900; font-size: 18px; color: #2d3436; }
-        
-        .services-grid {
+        .nav-card span { font-weight: 700; font-size: 14px; color: #2d3436; }
+        .balance-card span { color: white; }
+
+        /* شبكة الخدمات - 2 بكل سطر */
+        .services-section {
             display: grid;
-            grid-template-columns: 1fr 1fr; /* هذا هو التعديل المطلوب لظهور ثنتين بكل سطر */
+            grid-template-columns: 1fr 1fr;
             gap: 15px;
-            padding: 0 20px 30px;
-            max-width: 800px;
+            padding: 10px 20px 40px;
+            max-width: 900px;
             margin: auto;
         }
 
-        .service-card {
-            background: #fff;
-            padding: 25px 15px;
+        .service-box {
+            background: white;
+            padding: 25px 10px;
             border-radius: 25px;
             text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.02);
             border: 1px solid #f1f1f1;
-            box-shadow: var(--card-shadow);
-            cursor: pointer;
-            transition: 0.4s;
+            transition: 0.3s;
         }
-        .service-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.06); }
+        .service-box:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(108, 92, 231, 0.08); }
 
-        .service-icon {
-            width: 55px; height: 55px; border-radius: 18px;
+        .icon-circle {
+            width: 60px; height: 60px; border-radius: 20px;
             margin: 0 auto 15px; display: flex; align-items: center; justify-content: center;
-            font-size: 26px; color: #fff;
+            font-size: 28px; color: white;
         }
 
-        .service-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+        .service-box h3 { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
         .price-badge {
-            font-size: 10px; font-weight: 700; color: var(--primary);
-            background: rgba(95, 39, 205, 0.05); padding: 4px 10px; border-radius: 50px;
+            background: rgba(108, 92, 231, 0.06); color: var(--main-purple);
+            padding: 4px 12px; border-radius: 50px; font-size: 10px; font-weight: 900;
         }
 
-        /* نافذة الإشعار */
-        #alert-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.3); backdrop-filter: blur(5px);
-            display: none; align-items: center; justify-content: center; z-index: 11000;
-        }
-        .alert-box {
-            background: #fff; padding: 30px; border-radius: 30px; text-align: center;
-            width: 85%; max-width: 340px; box-shadow: 0 20px 60px rgba(0,0,0,0.1);
-        }
-        .ok-btn { margin-top: 20px; background: var(--primary); color: #fff; border: none; padding: 10px 35px; border-radius: 50px; font-family: 'Cairo'; cursor: pointer; }
-
+        /* الألوان */
+        .bg-black { background: #000; }
+        .bg-insta { background: linear-gradient(45deg, #f09433, #dc2743, #bc1888); }
+        .bg-blue { background: #1877f2; }
+        .bg-red { background: #ff0000; }
     </style>
 </head>
 <body>
 
-    <div id="loader"><div class="spinner"></div></div>
+    <header class="top-header">
+        <div class="user-right">
+            <span class="welcome-txt">مرحباً بك،</span>
+            <div class="name-heart-area">
+                <i class="fas fa-heart"></i>
+                <b id="user-name">...</b>
+                <i class="fas fa-heart"></i>
+            </div>
+        </div>
+        <div class="logout-left">
+            <i class="fas fa-power-off" onclick="logout()"></i>
+        </div>
+    </header>
 
-    <div id="alert-overlay">
-        <div class="alert-box">
-            <i class="fas fa-check-circle" style="font-size: 50px; color: var(--secondary); margin-bottom: 15px;"></i>
-            <h2 style="font-size: 18px;">تم استلام طلبك</h2>
-            <p style="font-size: 13px; color: #888; margin-top: 5px;">سيتم مراجعة طلبك من قبل الإدارة في أقرب وقت.</p>
-            <button class="ok-btn" onclick="document.getElementById('alert-overlay').style.display='none'">حسناً</button>
+    <div class="nav-grid">
+        <div class="nav-card balance-card">
+            <small>رصيدك الحالي</small>
+            <span id="user-balance">$0.0000</span>
+        </div>
+        <div class="nav-card" onclick="sendReq('شحن رصيد')">
+            <i class="fas fa-plus-circle" style="color: #00b894;"></i>
+            <span>شحن رصيد</span>
+        </div>
+        <div class="nav-card" onclick="window.location.href='my-orders.html'">
+            <i class="fas fa-receipt" style="color: var(--main-purple);"></i>
+            <span>سجل الطلبات</span>
+        </div>
+        <div class="nav-card" onclick="sendReq('دعم فني')">
+            <i class="fas fa-headset" style="color: var(--heart-color);"></i>
+            <span>دعم فني</span>
         </div>
     </div>
 
-    <div class="header-section">
-        <i class="fas fa-power-off logout-btn" onclick="logout()"></i>
-        <span class="welcome-msg">مرحباً بك،</span>
-        <div class="user-display">
-            <i class="fas fa-heart heart"></i>
-            <b id="u-name">...</b>
-            <i class="fas fa-heart heart"></i>
-        </div>
-    </div>
-
-    <div class="top-grid">
-        <div class="nav-box balance-box">
-            <small>الرصيد الحالي</small>
-            <span id="u-balance">$0.0000</span>
-        </div>
-        <div class="nav-box" onclick="sendReq('شحن رصيد')">
-            <i class="fas fa-wallet" style="color: #2ecc71;"></i> شحن رصيد
-        </div>
-        <div class="nav-box" onclick="window.location.href='my-orders.html'">
-            <i class="fas fa-history" style="color: var(--primary);"></i> السجل
-        </div>
-        <div class="nav-box" onclick="sendReq('دعم فني')">
-            <i class="fas fa-headset" style="color: var(--secondary);"></i> دعم فني
-        </div>
-    </div>
-
-    <h2 class="services-title">الخدمات المتوفرة</h2>
-
-    <div class="services-grid">
-        <div class="service-card" onclick="goTo('متابعين تيك توك')">
-            <div class="service-icon" style="background: #000;"><i class="fab fa-tiktok"></i></div>
+    <div class="services-section">
+        <div class="service-box" onclick="openS('متابعين تيك توك')">
+            <div class="icon-circle bg-black"><i class="fab fa-tiktok"></i></div>
             <h3>متابعين تيك توك</h3>
             <span class="price-badge">1000 متابع بـ 5$</span>
         </div>
-
-        <div class="service-card" onclick="goTo('مشاهدات تيك توك')">
-            <div class="service-icon" style="background: #000;"><i class="fas fa-eye"></i></div>
+        <div class="service-box" onclick="openS('مشاهدات تيك توك')">
+            <div class="icon-circle bg-black"><i class="fas fa-eye"></i></div>
             <h3>مشاهدات تيك توك</h3>
             <span class="price-badge">10,000 مشاهدة بـ 1$</span>
         </div>
-
-        <div class="service-card" onclick="goTo('إعجابات تيك توك')">
-            <div class="service-icon" style="background: #000;"><i class="fas fa-heart"></i></div>
-            <h3>إعجابات تيك توك</h3>
-            <span class="price-badge">1000 إعجاب بـ 0.5$</span>
-        </div>
-
-        <div class="service-card" onclick="goTo('متابعين إنستغرام')">
-            <div class="service-icon" style="background: linear-gradient(45deg, #f09433, #dc2743, #bc1888);"><i class="fab fa-instagram"></i></div>
+        <div class="service-box" onclick="openS('متابعين إنستغرام')">
+            <div class="icon-circle bg-insta"><i class="fab fa-instagram"></i></div>
             <h3>متابعين إنستغرام</h3>
             <span class="price-badge">1000 متابع بـ 3$</span>
+        </div>
+        <div class="service-box" onclick="openS('متابعين فيسبوك')">
+            <div class="icon-circle bg-blue"><i class="fab fa-facebook-f"></i></div>
+            <h3>متابعين فيسبوك</h3>
+            <span class="price-badge">1000 متابع بـ 4$</span>
+        </div>
+        <div class="service-box" onclick="openS('مشتركين يوتيوب')">
+            <div class="icon-circle bg-red"><i class="fab fa-youtube"></i></div>
+            <h3>مشتركين يوتيوب</h3>
+            <span class="price-badge">1000 مشترك بـ 15$</span>
         </div>
     </div>
 
@@ -219,7 +226,6 @@
             messagingSenderId: "693047037412",
             appId: "1:693047037412:web:9d3f3ab7831ac35cd80bf1"
         };
-
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
         const user = localStorage.getItem('user');
@@ -227,27 +233,25 @@
         if(!user) window.location.href = "index.html";
 
         window.onload = () => {
-            document.getElementById('u-name').innerText = user;
-            setTimeout(() => { document.getElementById('loader').style.display = 'none'; }, 600);
-            
+            document.getElementById('user-name').innerText = user;
             db.ref('users/' + user + '/balance').on('value', (s) => {
-                document.getElementById('u-balance').innerText = "$" + parseFloat(s.val() || 0).toFixed(4);
+                document.getElementById('user-balance').innerText = "$" + parseFloat(s.val() || 0).toFixed(4);
             });
         };
 
         function sendReq(type) {
-            const id = "ID-" + Date.now();
+            const id = "REQ-" + Date.now();
             const data = {
                 orderId: id, user: user, service: "طلب " + type,
-                status: "⏳ قيد الانتظار", date: new Date().toLocaleString('ar-EG'),
-                price: "0", qty: "---", link: "داخلي"
+                status: "⏳ قيد المراجعة", date: new Date().toLocaleString('ar-EG'),
+                price: "0", qty: "---", link: "نظام داخلي"
             };
             db.ref('orders/' + id).set(data);
             db.ref('user_orders/' + user + '/' + id).set(data);
-            document.getElementById('alert-overlay').style.display = 'flex';
+            alert("تم إرسال طلب " + type + " بنجاح.");
         }
 
-        function goTo(name) { localStorage.setItem('chosenService', name); window.location.href = "order.html"; }
+        function openS(s) { localStorage.setItem('chosenService', s); window.location.href = "order.html"; }
         function logout() { localStorage.removeItem('user'); window.location.href = "index.html"; }
     </script>
 </body>
