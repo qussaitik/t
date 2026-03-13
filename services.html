@@ -29,13 +29,15 @@
             overflow-x: hidden;
         }
 
-        /* شريط الإهداء المطور */
+        /* شريط الإهداء - فوري وبدون تأخير */
         .ticker-wrapper {
             background: rgba(0, 0, 0, 0.6);
             border-bottom: 1px solid var(--gold);
             padding: 12px 0;
             overflow: hidden;
             white-space: nowrap;
+            position: relative;
+            direction: ltr; /* لضمان حركة اليسار لليمين */
         }
         .ticker-text {
             display: inline-block;
@@ -43,12 +45,12 @@
             font-weight: 700;
             font-size: 16px;
             text-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
-            padding-left: 100%; /* يبدأ من أقصى اليسار لليمين */
-            animation: scroll-left-to-right 20s linear infinite;
+            /* يبدأ الأنميشن فوراً ويتحرك لمسافة عرض النص فقط */
+            animation: scroll-left-to-right 12s linear infinite;
         }
         @keyframes scroll-left-to-right {
-            0% { transform: translateX(0%); }
-            100% { transform: translateX(100%); }
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100vw); }
         }
 
         #loader { position: fixed; inset: 0; background: var(--dark-bg); display: flex; justify-content: center; align-items: center; z-index: 10000; }
@@ -124,9 +126,7 @@
 <body>
 
     <div class="ticker-wrapper">
-        <div id="dynamic-ticker" class="ticker-text">
-            جاري تحميل آخر الأخبار...
-        </div>
+        <div id="dynamic-ticker" class="ticker-text">جاري التحميل...</div>
     </div>
 
     <div id="loader"><div class="spinner"></div></div>
@@ -219,12 +219,11 @@
             document.getElementById('user-name-display').innerText = user;
             setTimeout(() => { document.getElementById('loader').style.display = 'none'; }, 600);
             
-            // تحديث الرصيد
             database.ref('users/' + user + '/balance').on('value', (snap) => {
                 document.getElementById('user-balance-display').innerText = "$" + parseFloat(snap.val() || 0).toFixed(4);
             });
 
-            // جلب الشريط المتحرك من الإدمن
+            // جلب الشريط والتحكم بالسرعة من الإدمن
             const tickerEl = document.getElementById('dynamic-ticker');
             database.ref('settings/ticker').on('value', (snapshot) => {
                 const data = snapshot.val();
@@ -234,7 +233,7 @@
                 }
             });
 
-            // --- نظام الرادار: تحديث الحالة عند فتح الصفحة ---
+            // نظام الرادار
             const presenceRef = database.ref('status/' + user);
             presenceRef.set({ state: 'online', last_changed: firebase.database.ServerValue.TIMESTAMP });
             presenceRef.onDisconnect().set({ state: 'offline', last_changed: firebase.database.ServerValue.TIMESTAMP });
@@ -250,7 +249,6 @@
 
         function openOrder(name) { localStorage.setItem('chosenService', name); window.location.href = "order.html"; }
         function logout() { 
-            // تسجيل الخروج: تحويل الحالة لأوفلاين ومسح التوكن
             database.ref('status/' + user).set({ state: 'offline' });
             localStorage.removeItem('user'); 
             window.location.href = "index.html"; 
