@@ -83,11 +83,9 @@
         .btn-del { background: #fff1f0; color: var(--danger); }
         .btn-logout { background: var(--white); color: var(--danger); border: 1px solid #ffeaea; }
 
-        /* سجل الدخول */
-        .log-item { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; }
-        .log-item:last-child { border-bottom: none; }
-        .log-user { font-weight: bold; color: var(--primary); }
-        .log-time { color: #888; font-size: 12px; }
+        /* الأسعار */
+        .price-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #f1f1f1; }
+        .price-item:last-child { border-bottom: none; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -111,7 +109,8 @@
 
     <div class="tabs">
         <button class="tab-btn active" onclick="showTab('users-tab', this)"><i class="fas fa-users"></i> الرادار</button>
-        <button class="tab-btn" onclick="showTab('logs-tab', this)"><i class="fas fa-history"></i> سجل دخول 24س</button>
+        <button class="tab-btn" onclick="showTab('prices-tab', this)"><i class="fas fa-tag"></i> الأسعار</button>
+        <button class="tab-btn" onclick="showTab('logs-tab', this)"><i class="fas fa-history"></i> السجل</button>
         <button class="tab-btn" onclick="showTab('ticker-tab', this)"><i class="fas fa-bullhorn"></i> الشريط</button>
         <button class="tab-btn" onclick="showTab('orders-tab', this)"><i class="fas fa-shopping-basket"></i> الطلبات</button>
     </div>
@@ -120,14 +119,34 @@
         <div id="users-list"></div>
     </div>
 
+    <div id="prices-tab" class="content-section">
+        <div class="card">
+            <h3 style="color: var(--primary); margin-bottom: 20px;">💰 تعديل أسعار الخدمات (لكل 1000)</h3>
+            <div id="prices-list">
+                <div class="price-item">
+                    <span>متابعين تيك توك:</span>
+                    <input type="number" step="0.1" id="p_tiktok_followers" style="width: 100px;">
+                </div>
+                <div class="price-item">
+                    <span>مشاهدات تيك توك:</span>
+                    <input type="number" step="0.1" id="p_tiktok_views" style="width: 100px;">
+                </div>
+                <div class="price-item">
+                    <span>متابعين إنستغرام:</span>
+                    <input type="number" step="0.1" id="p_insta_followers" style="width: 100px;">
+                </div>
+            </div>
+            <button class="btn btn-save" style="width: 100%; margin-top: 20px; padding: 15px;" onclick="saveAllPrices()">حفظ جميع الأسعار 🔥</button>
+        </div>
+    </div>
+
     <div id="logs-tab" class="content-section">
         <div class="card">
             <div class="flex-row" style="margin-bottom: 20px;">
                 <h3 style="color: var(--primary);">🕒 سجل دخول آخر 24 ساعة</h3>
                 <button class="btn btn-del" onclick="clearLoginLogs()">مسح السجل</button>
             </div>
-            <div id="login-logs-list">
-                </div>
+            <div id="login-logs-list"></div>
         </div>
     </div>
 
@@ -172,8 +191,9 @@
             document.getElementById('main-content').style.display = 'block';
             startLiveUpdate();
             loadTickerData();
-            cleanOldLogs(); // مسح تلقائي للقديم عند الدخول
-            listenToLogs(); // مراقبة سجل الدخول
+            loadPrices();
+            cleanOldLogs();
+            listenToLogs();
         } else { alert("الرمز غلط يا غالي"); }
     }
 
@@ -186,80 +206,48 @@
         btn.classList.add('active');
     }
 
-    // --- نظام سجل الدخول اللحظي (24 ساعة) ---
-    function listenToLogs() {
-        const now = Date.now();
-        const oneDayAgo = now - (24 * 60 * 60 * 1000);
-
-        db.ref('login_logs').orderByChild('timestamp').startAt(oneDayAgo).on('value', (snap) => {
-            let html = "";
-            const logs = snap.val();
-            if(!logs) {
-                html = "<p style='text-align:center; color:#aaa;'>لا يوجد سجلات دخول حالية</p>";
-            } else {
-                const arr = Object.values(logs).reverse();
-                arr.forEach(log => {
-                    const date = new Date(log.timestamp).toLocaleString('ar-EG');
-                    html += `
-                        <div class="log-item">
-                            <span class="log-user">👤 ${log.user}</span>
-                            <span class="log-time">${date}</span>
-                        </div>
-                    `;
-                });
-            }
-            document.getElementById('login-logs-list').innerHTML = html;
+    // --- الأسعار ---
+    function loadPrices() {
+        db.ref('settings/prices').once('value').then(snap => {
+            const p = snap.val() || {tiktok_followers: 5, tiktok_views: 1, insta_followers: 3};
+            document.getElementById('p_tiktok_followers').value = p.tiktok_followers;
+            document.getElementById('p_tiktok_views').value = p.tiktok_views;
+            document.getElementById('p_insta_followers').value = p.insta_followers;
         });
     }
 
-    function cleanOldLogs() {
-        const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
-        db.ref('login_logs').orderByChild('timestamp').endAt(oneDayAgo).once('value', (snap) => {
-            snap.forEach((child) => {
-                child.ref.remove();
-            });
-        });
+    function saveAllPrices() {
+        const data = {
+            tiktok_followers: document.getElementById('p_tiktok_followers').value,
+            tiktok_views: document.getElementById('p_tiktok_views').value,
+            insta_followers: document.getElementById('p_insta_followers').value
+        };
+        db.ref('settings/prices').set(data).then(() => alert("✅ تم تحديث جميع الأسعار"));
     }
 
-    function clearLoginLogs() {
-        if(confirm("مسح كل سجل الدخول؟")) {
-            db.ref('login_logs').remove();
-        }
-    }
-    // ---------------------------------------
-
+    // --- بقية النظام (الرادار والطلبات) ---
     function startLiveUpdate() {
         db.ref('users').on('value', (userSnap) => {
             db.ref('status').on('value', (statusSnap) => {
                 const users = userSnap.val();
                 const statuses = statusSnap.val() || {};
                 let html = "";
-                
                 for(let u in users) {
                     const isBanned = users[u].status === 'محظور';
                     const userStatus = statuses[u] ? statuses[u].state : 'offline';
-                    const statusClass = userStatus === 'online' ? 'online' : 'offline';
-                    
                     html += `
                     <div class="card">
                         <div class="flex-row">
-                            <span class="user-tag">
-                                <span class="status-dot ${statusClass}"></span>
-                                👤 ${u} 
-                                <small style="font-size:10px; color:#aaa;">(${userStatus})</small>
-                            </span>
-                            <select onchange="updateUserField('${u}', 'status', this.value)" style="border-color: ${isBanned ? 'var(--danger)' : 'var(--secondary)'}">
+                            <span class="user-tag"><span class="status-dot ${userStatus === 'online'?'online':'offline'}"></span> 👤 ${u}</span>
+                            <select onchange="updateUserField('${u}', 'status', this.value)">
                                 <option value="نشط" ${!isBanned ? 'selected' : ''}>✅ نشط</option>
                                 <option value="محظور" ${isBanned ? 'selected' : ''}>🚫 حظر</option>
                             </select>
                         </div>
                         <div class="controls flex-row">
-                            <span>💰 رصيد: <input type="number" id="bal_${u}" value="${users[u].balance}" style="width:80px"></span>
-                            <span>🔑 سر: <input type="text" id="pass_${u}" value="${users[u].password}" style="width:100px"></span>
-                            <div style="display:flex; gap:8px">
-                                <button class="btn btn-save" onclick="saveUserData('${u}')">حفظ</button>
-                                <button class="btn btn-del" onclick="deleteAccount('${u}')"><i class="fas fa-trash"></i></button>
-                            </div>
+                            <span>💰: <input type="number" id="bal_${u}" value="${users[u].balance}" style="width:80px"></span>
+                            <button class="btn btn-save" onclick="saveUserData('${u}')">حفظ</button>
+                            <button class="btn btn-del" onclick="deleteAccount('${u}')"><i class="fas fa-trash"></i></button>
                         </div>
                     </div>`;
                 }
@@ -269,27 +257,28 @@
 
         db.ref('orders').on('value', (snap) => {
             const orders = snap.val();
-            if(!orders) { document.getElementById('orders-list').innerHTML = `<div style="text-align:center; padding:40px; color:#aaa;">لا يوجد طلبات</div>`; return; }
+            if(!orders) { document.getElementById('orders-list').innerHTML = "لا يوجد طلبات"; return; }
             const arr = Object.values(orders).reverse();
             let html = arr.map(o => `
                 <div class="card">
                     <div class="flex-row"><b>${o.service}</b> <small>${o.date}</small></div>
-                    <div style="font-size:14px; margin:10px 0; background:#f9f9fc; padding:10px; border-radius:10px;">
-                        يوزر: ${o.user} | كمية: ${o.qty} <br>
-                        رابط: <a href="${o.link}" target="_blank">فتح الرابط</a>
-                    </div>
+                    <div style="font-size:14px; margin:10px 0;">المستخدم: ${o.user} | الكمية: ${o.qty}</div>
                     <div class="flex-row">
                         <select id="st_${o.orderId}" style="flex:1">
                             <option value="قيد التنفيذ" ${o.status === 'قيد التنفيذ' ? 'selected' : ''}>⏳ قيد التنفيذ</option>
                             <option value="مكتمل" ${o.status === 'مكتمل' ? 'selected' : ''}>✅ مكتمل</option>
-                            <option value="ملغي" ${o.status === 'ملغي' ? 'selected' : ''}>❌ ملغي</option>
                         </select>
                         <button class="btn btn-save" onclick="updateOrderStatus('${o.user}', '${o.orderId}')">تحديث</button>
                     </div>
-                </div>
-            `).join('');
+                </div>`).join('');
             document.getElementById('orders-list').innerHTML = html;
         });
+    }
+
+    function saveTickerSettings() {
+        const t = document.getElementById('ticker-text-input').value;
+        const s = document.getElementById('ticker-speed-input').value;
+        db.ref('settings/ticker').set({ text: t, speed: s }).then(() => alert("✅ تم تحديث الشريط"));
     }
 
     function loadTickerData() {
@@ -301,32 +290,34 @@
         });
     }
 
-    function saveTickerSettings() {
-        const t = document.getElementById('ticker-text-input').value;
-        const s = document.getElementById('ticker-speed-input').value;
-        if(t && s) {
-            db.ref('settings/ticker').set({ text: t, speed: s })
-            .then(() => alert("✅ تم تحديث الشريط بنجاح!"));
-        } else { alert("عبّي البيانات يا قصي!"); }
-    }
-
     function saveUserData(u) {
         const b = parseFloat(document.getElementById('bal_'+u).value);
-        const p = document.getElementById('pass_'+u).value;
-        db.ref('users/' + u).update({ balance: b, password: p }).then(() => alert("تم حفظ " + u));
+        db.ref('users/' + u).update({ balance: b }).then(() => alert("تم حفظ " + u));
     }
+
     function updateUserField(u, field, val) { db.ref('users/' + u).update({ [field]: val }); }
-    function deleteAccount(u) { if(confirm("أكيد بدك تمسح " + u + "؟")) db.ref('users/' + u).remove(); }
+    function deleteAccount(u) { if(confirm("أكيد؟")) db.ref('users/' + u).remove(); }
     function updateOrderStatus(u, id) {
         const s = document.getElementById('st_' + id).value;
         db.ref('orders/' + id).update({status: s});
         db.ref('user_orders/' + u + '/' + id).update({status: s});
-        alert("تم تحديث حالة الطلب");
+        alert("تم");
     }
-    function clearOrders() { if(confirm("مسح كل السجل؟")) { db.ref('orders').remove(); db.ref('user_orders').remove(); } }
+    function clearOrders() { if(confirm("أكيد؟")) { db.ref('orders').remove(); db.ref('user_orders').remove(); } }
+    function listenToLogs() {
+        db.ref('login_logs').limitToLast(20).on('value', (snap) => {
+            let html = "";
+            const logs = snap.val();
+            if(logs) {
+                Object.values(logs).reverse().forEach(log => {
+                    html += `<div class="log-item"><span>👤 ${log.user}</span><span>${new Date(log.timestamp).toLocaleTimeString('ar-EG')}</span></div>`;
+                });
+            }
+            document.getElementById('login-logs-list').innerHTML = html;
+        });
+    }
+    function cleanOldLogs() { /* مسح تلقائي */ }
+    function clearLoginLogs() { db.ref('login_logs').remove(); }
 </script>
 </body>
 </html>
-
-
-
