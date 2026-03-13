@@ -33,13 +33,6 @@
             color: white;
         }
 
-        #loader {
-            display: none; position: fixed; inset: 0;
-            background: rgba(15, 12, 41, 0.98); z-index: 10000;
-            flex-direction: column; justify-content: center; align-items: center;
-            backdrop-filter: blur(15px);
-        }
-
         .main-logo {
             text-align: center; margin-bottom: 40px;
             animation: glow 2s ease-in-out infinite alternate;
@@ -117,25 +110,9 @@
 
         @keyframes glow { from { filter: drop-shadow(0 0 5px rgba(108,92,231,0.4)); } to { filter: drop-shadow(0 0 20px rgba(108,92,231,0.8)); } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-
-        .dua-box {
-            background: white; padding: 25px; border-radius: 25px; text-align: center; color: #333;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-        }
-        .progress-bar { width: 200px; height: 4px; background: #eee; border-radius: 10px; margin-top: 15px; overflow: hidden; }
-        .progress-line { width: 100%; height: 100%; background: var(--primary); animation: loading 2s infinite; }
-        @keyframes loading { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
     </style>
 </head>
 <body>
-
-    <div id="loader">
-        <div class="dua-box">
-            <h3 style="color: var(--primary); font-weight: 900;">قُصي وورده ❤️</h3>
-            <p style="font-size: 12px; margin-top: 5px;">اللهم اجمع بينهم بالخير والحلال قريباً</p>
-            <div class="progress-bar"><div class="progress-line"></div></div>
-        </div>
-    </div>
 
     <div id="portal-view">
         <div class="main-logo">
@@ -225,7 +202,6 @@
             const p = document.getElementById('pass').value.trim();
             if(!u || !p) return alert("عبّي بياناتك يا غالي");
             
-            document.getElementById('loader').style.display = 'flex';
             database.ref('users/' + u).once('value').then((snap) => {
                 const data = snap.val();
                 if (data && data.password === p) {
@@ -233,7 +209,6 @@
                         alert("⚠️ حسابك محظور!");
                         location.reload();
                     } else {
-                        // --- نظام الرادار اللحظي ---
                         const presenceRef = database.ref('status/' + u);
                         presenceRef.set({
                             state: 'online',
@@ -243,14 +218,12 @@
                             state: 'offline',
                             last_changed: firebase.database.ServerValue.TIMESTAMP
                         });
-                        // ------------------------
 
                         localStorage.setItem('user', u);
                         window.location.href = "services.html";
                     }
                 } else {
                     alert("❌ الاسم أو السر غلط");
-                    document.getElementById('loader').style.display = 'none';
                 }
             });
         }
@@ -261,11 +234,9 @@
             const p = document.getElementById('reg-pass').value.trim();
             if(!u || !e || !p) return alert("كل الخانات مطلوبة");
 
-            document.getElementById('loader').style.display = 'flex';
             database.ref('users/' + u).once('value').then((snap) => {
                 if (snap.exists()) {
                     alert("❌ الاسم مستخدم من قبل");
-                    document.getElementById('loader').style.display = 'none';
                 } else {
                     database.ref('users/' + u).set({
                         username: u, email: e, password: p, balance: 0,
