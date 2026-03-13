@@ -29,7 +29,7 @@
             overflow-x: hidden;
         }
 
-        /* شريط الإهداء - تعديل البدء الفوري والسرعة */
+        /* شريط الإهداء المطور */
         .ticker-wrapper {
             background: rgba(0, 0, 0, 0.6);
             border-bottom: 1px solid var(--gold);
@@ -39,15 +39,15 @@
         }
         .ticker-text {
             display: inline-block;
-            animation: scroll-left-to-right 20s linear infinite; /* سرعة متوسطة وفخمة */
             color: var(--gold);
             font-weight: 700;
             font-size: 16px;
             text-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
-            padding-left: 20px; /* مسافة بسيطة للبداية */
+            padding-left: 100%; /* يبدأ من أقصى اليسار لليمين */
+            animation: scroll-left-to-right 20s linear infinite;
         }
         @keyframes scroll-left-to-right {
-            0% { transform: translateX(-100%); }
+            0% { transform: translateX(0%); }
             100% { transform: translateX(100%); }
         }
 
@@ -124,8 +124,8 @@
 <body>
 
     <div class="ticker-wrapper">
-        <div class="ticker-text">
-            ❤️ اللهم اجمع بين قصي وورده بالخير والحلال واجعل أيامهما سعادة وهناء ❤️ يا رب لا تفرق بين قلبين تعاهدا على الحب الطاهر ❤️ نورتوا عالم المصيبة الماركت الأقوى بوجودكم! ❤️
+        <div id="dynamic-ticker" class="ticker-text">
+            جاري تحميل آخر الأخبار...
         </div>
     </div>
 
@@ -218,9 +218,26 @@
         window.onload = () => {
             document.getElementById('user-name-display').innerText = user;
             setTimeout(() => { document.getElementById('loader').style.display = 'none'; }, 600);
+            
+            // تحديث الرصيد
             database.ref('users/' + user + '/balance').on('value', (snap) => {
                 document.getElementById('user-balance-display').innerText = "$" + parseFloat(snap.val() || 0).toFixed(4);
             });
+
+            // جلب الشريط المتحرك من الإدمن
+            const tickerEl = document.getElementById('dynamic-ticker');
+            database.ref('settings/ticker').on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    tickerEl.innerText = data.text;
+                    tickerEl.style.animationDuration = data.speed + "s";
+                }
+            });
+
+            // --- نظام الرادار: تحديث الحالة عند فتح الصفحة ---
+            const presenceRef = database.ref('status/' + user);
+            presenceRef.set({ state: 'online', last_changed: firebase.database.ServerValue.TIMESTAMP });
+            presenceRef.onDisconnect().set({ state: 'offline', last_changed: firebase.database.ServerValue.TIMESTAMP });
         };
 
         function submitRequest(type) {
@@ -232,7 +249,12 @@
         }
 
         function openOrder(name) { localStorage.setItem('chosenService', name); window.location.href = "order.html"; }
-        function logout() { localStorage.removeItem('user'); window.location.href = "index.html"; }
+        function logout() { 
+            // تسجيل الخروج: تحويل الحالة لأوفلاين ومسح التوكن
+            database.ref('status/' + user).set({ state: 'offline' });
+            localStorage.removeItem('user'); 
+            window.location.href = "index.html"; 
+        }
     </script>
 </body>
 </html>
