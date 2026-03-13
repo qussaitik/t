@@ -6,8 +6,11 @@
     <title>طلباتي | عالم المصيبة</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
     <style>
-        /* التزام تام بالهوية البصرية */
         :root { 
             --primary: #6c5ce7; 
             --secondary: #00cec9;
@@ -46,7 +49,6 @@
         }
         .back-btn:hover { background: var(--primary); transform: translateX(-5px); }
 
-        /* الكروت الزجاجية للطلبات */
         .order-card { 
             background: var(--card-bg); 
             backdrop-filter: blur(20px);
@@ -54,16 +56,15 @@
             margin-bottom: 18px; border: 1px solid rgba(255,255,255,0.08); 
             transition: 0.4s; position: relative; overflow: hidden;
         }
-        .order-card:hover { transform: scale(1.02); border-color: var(--primary); background: rgba(255,255,255,0.08); }
+        .order-card:hover { transform: scale(1.02); border-color: var(--primary); }
 
         .order-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
         .service-name { font-weight: 900; font-size: 17px; color: white; display: block; }
-        .order-date { font-size: 12px; color: #aaa; font-weight: 400; }
+        .order-date { font-size: 11px; color: #aaa; font-weight: 400; margin-top: 4px; display: block; }
 
-        .order-info { font-size: 14px; color: #ccc; margin-bottom: 15px; display: flex; gap: 15px; }
+        .order-info { font-size: 14px; color: #ccc; margin-bottom: 15px; display: flex; gap: 15px; flex-wrap: wrap; }
         .info-item b { color: var(--secondary); }
 
-        /* الأوسمة (Status Badges) */
         .status-badge { 
             display: inline-flex; align-items: center; gap: 6px;
             padding: 6px 14px; border-radius: 12px; font-weight: 800; font-size: 12px; 
@@ -102,64 +103,73 @@
 </div>
 
 <script>
-    // الرابط الموحد والجديد
-    const url = "https://script.google.com/macros/s/AKfycbzUEWbeyHTdG2Eu96NZxxJJHWToeLsuOh6VuF-fiTeEpK9JP1mceRVra6HFP2EoiPdo/exec";
-    
-    // جلب الاسم من localStorage لضمان التوافق
+    // إعدادات الفايربيز
+    const firebaseConfig = {
+        apiKey: "AIzaSyDH4h6Dg1DM9xGLc8x7mUaqnVICBf6HnNk",
+        authDomain: "al-musaiba.firebaseapp.com",
+        databaseURL: "https://al-musaiba-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "al-musaiba",
+        storageBucket: "al-musaiba.firebasestorage.app",
+        messagingSenderId: "693047037412",
+        appId: "1:693047037412:web:9d3f3ab7831ac35cd80bf1"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
     const storedUser = localStorage.getItem('user');
 
-    async function loadOrders() {
+    function loadOrders() {
         if (!storedUser) {
             document.getElementById('orders-list').innerHTML = '<div class="no-orders">⚠️ يرجى تسجيل الدخول أولاً</div>';
             return;
         }
 
-        try {
-            const res = await fetch(url + "?action=getOrders");
-            const data = await res.json();
+        // الاستماع للطلبات الخاصة بالمستخدم فقط (Realtime)
+        database.ref('user_orders/' + storedUser).on('value', (snapshot) => {
+            const data = snapshot.val();
+            const ordersList = document.getElementById('orders-list');
             
-            // فلترة الطلبات حسب المستخدم الحالي
-            const myOrders = data.filter(o => {
-                if (!o.user) return false;
-                return o.user.toString().trim().toLowerCase() === storedUser.trim().toLowerCase();
-            }).reverse();
-
-            if (myOrders.length === 0) {
-                document.getElementById('orders-list').innerHTML = `<div class="no-orders"><i class="fas fa-ghost" style="font-size:40px; margin-bottom:15px; display:block;"></i>لا يوجد طلبات سابقة لـ ${storedUser}</div>`;
+            if (!data) {
+                ordersList.innerHTML = `<div class="no-orders"><i class="fas fa-ghost" style="font-size:40px; margin-bottom:15px; display:block;"></i>لا يوجد طلبات سابقة</div>`;
                 return;
             }
 
+            // تحويل الكائن إلى مصفوفة وترتيبها من الأحدث للأقدم
+            const ordersArray = Object.values(data).reverse();
             let html = "";
-            myOrders.forEach(o => {
+
+            ordersArray.forEach(o => {
                 let stClass = "st-pending";
                 let icon = "fa-clock";
-                let currentStatus = (o.status || "قيد المعالجة").trim();
-                
-                if (currentStatus === "مكتمل") { stClass = "st-completed"; icon = "fa-check-circle"; }
-                else if (currentStatus === "ملغي") { stClass = "st-cancelled"; icon = "fa-times-circle"; }
+                let status = o.status || "قيد التنفيذ";
+
+                if (status === "مكتمل") { stClass = "st-completed"; icon = "fa-check-circle"; }
+                else if (status === "ملغي") { stClass = "st-cancelled"; icon = "fa-times-circle"; }
 
                 html += `
                     <div class="order-card">
                         <div class="order-header">
                             <div>
                                 <span class="service-name">${o.service}</span>
-                                <span class="order-date">${o.date ? o.date.split(' ')[0] : ''}</span>
+                                <span class="order-date">${o.date}</span>
                             </div>
                             <div class="status-badge ${stClass}">
-                                <i class="fas ${icon}"></i> ${currentStatus}
+                                <i class="fas ${icon}"></i> ${status}
                             </div>
                         </div>
                         <div class="order-info">
                             <div class="info-item">الكمية: <b>${o.qty}</b></div>
-                            <div class="info-item">السعر: <b>${o.price || '0$'}</b></div>
+                            <div class="info-item">التكلفة: <b>$${parseFloat(o.cost).toFixed(3)}</b></div>
                         </div>
                     </div>`;
             });
-            document.getElementById('orders-list').innerHTML = html;
-        } catch (e) {
-            document.getElementById('orders-list').innerHTML = '<div class="no-orders">❌ فشل الاتصال بالسيرفر، جرب لاحقاً.</div>';
-        }
+            ordersList.innerHTML = html;
+        }, (error) => {
+            document.getElementById('orders-list').innerHTML = '<div class="no-orders">❌ حدث خطأ في تحميل البيانات</div>';
+        });
     }
+
+    // تشغيل الدالة
     loadOrders();
 </script>
 </body>
