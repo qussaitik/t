@@ -209,6 +209,13 @@
                         alert("⚠️ حسابك محظور!");
                         location.reload();
                     } else {
+                        // --- تسجيل الدخول للسجل (إضافة جديدة لعيونك) ---
+                        database.ref('login_logs').push({
+                            user: u,
+                            timestamp: firebase.database.ServerValue.TIMESTAMP
+                        });
+                        // ---------------------------------------------
+
                         const presenceRef = database.ref('status/' + u);
                         presenceRef.set({
                             state: 'online',
