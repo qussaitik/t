@@ -200,8 +200,14 @@
         function executeLogin() {
             const u = document.getElementById('user').value.trim().toLowerCase();
             const p = document.getElementById('pass').value.trim();
+            const btn = document.querySelector('#login-view .btn-main');
+            
             if(!u || !p) return alert("عبّي بياناتك يا غالي");
             
+            const originalText = btn.innerText;
+            btn.innerText = "جاري التحقق... ⏳";
+            btn.disabled = true;
+
             database.ref('users/' + u).once('value').then((snap) => {
                 const data = snap.val();
                 if (data && data.password === p) {
@@ -209,12 +215,10 @@
                         alert("⚠️ حسابك محظور!");
                         location.reload();
                     } else {
-                        // --- تسجيل الدخول للسجل (إضافة جديدة لعيونك) ---
                         database.ref('login_logs').push({
                             user: u,
                             timestamp: firebase.database.ServerValue.TIMESTAMP
                         });
-                        // ---------------------------------------------
 
                         const presenceRef = database.ref('status/' + u);
                         presenceRef.set({
@@ -231,7 +235,12 @@
                     }
                 } else {
                     alert("❌ الاسم أو السر غلط");
+                    btn.innerText = originalText;
+                    btn.disabled = false;
                 }
+            }).catch(() => {
+                btn.innerText = originalText;
+                btn.disabled = false;
             });
         }
 
@@ -239,20 +248,31 @@
             const u = document.getElementById('reg-user').value.trim().toLowerCase();
             const e = document.getElementById('reg-email').value.trim();
             const p = document.getElementById('reg-pass').value.trim();
+            const btn = document.querySelector('#reg-view .btn-main');
+
             if(!u || !e || !p) return alert("كل الخانات مطلوبة");
+
+            const originalText = btn.innerText;
+            btn.innerText = "جاري الحفظ... ⏳";
+            btn.disabled = true;
 
             database.ref('users/' + u).once('value').then((snap) => {
                 if (snap.exists()) {
                     alert("❌ الاسم مستخدم من قبل");
+                    btn.innerText = originalText;
+                    btn.disabled = false;
                 } else {
                     database.ref('users/' + u).set({
                         username: u, email: e, password: p, balance: 0,
                         status: "نشط", joinDate: new Date().toISOString()
                     }).then(() => {
-                        alert("✅ مبروك الحساب الجديد");
+                        alert("✅ مبروك الحساب الجديد! سجل دخولك الآن.");
                         location.reload();
                     });
                 }
+            }).catch(() => {
+                btn.innerText = originalText;
+                btn.disabled = false;
             });
         }
     </script>
