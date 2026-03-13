@@ -6,6 +6,10 @@
     <title>عالم المصيبة | الخدمات</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
     <style>
         :root {
             --primary: #6c5ce7;
@@ -105,7 +109,6 @@
             border: 1px solid rgba(255,255,255,0.1);
         }
 
-        /* لودر الدعم الفني والشحن مع زر الواتساب */
         #support-toast {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: rgba(26, 28, 44, 0.98); backdrop-filter: blur(25px);
@@ -120,10 +123,8 @@
             text-decoration: none; font-weight: bold; font-size: 14px; 
             transition: 0.3s; box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
         }
-        #whatsapp-btn:hover { transform: scale(1.05); background: #20ba5a; }
 
         .progress-bar { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-top: 25px; overflow: hidden; }
-        /* وقت اللودر 12 ثانية */
         .progress-fill { width: 100%; height: 100%; background: var(--secondary); animation: progressAnim 12s linear forwards; }
         @keyframes progressAnim { from { width: 100%; } to { width: 0%; } }
 
@@ -137,6 +138,7 @@
 <body>
 
     <script>
+        // حماية الصفحة: إذا مش مسجل دخول، ارجع للرئيسية
         if(!localStorage.getItem('user')) window.location.href="index.html";
     </script>
     
@@ -212,36 +214,52 @@
     </div>
 
     <script>
-        const url = "https://script.google.com/macros/s/AKfycbzUEWbeyHTdG2Eu96NZxxJJHWToeLsuOh6VuF-fiTeEpK9JP1mceRVra6HFP2EoiPdo/exec";
+        // إعدادات الفايربيز
+        const firebaseConfig = {
+            apiKey: "AIzaSyDH4h6Dg1DM9xGLc8x7mUaqnVICBf6HnNk",
+            authDomain: "al-musaiba.firebaseapp.com",
+            databaseURL: "https://al-musaiba-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "al-musaiba",
+            storageBucket: "al-musaiba.firebasestorage.app",
+            messagingSenderId: "693047037412",
+            appId: "1:693047037412:web:9d3f3ab7831ac35cd80bf1"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
         const user = localStorage.getItem('user');
+
         if(user) document.getElementById('u').innerText = user;
 
+        // جلب الرصيد وتحديثه تلقائياً (Realtime)
+        function watchBalance() {
+            database.ref('users/' + user + '/balance').on('value', (snapshot) => {
+                const balance = snapshot.val() || 0;
+                document.getElementById('b').innerText = "$" + parseFloat(balance).toFixed(4);
+            });
+        }
+
+        // معالجة طلبات الشحن والدعم الفني
         function handleAction(actionType, icon) {
             const toast = document.getElementById('support-toast');
             const waBtn = document.getElementById('whatsapp-btn');
             document.getElementById('toast-icon').innerText = icon;
             
-            // تخصيص رسالة الواتساب بناءً على نوع الطلب
             const message = `مرحباً، لقد أرسلت طلباً جديداً من عالم المصيبة:\n- نوع الطلب: ${actionType}\n- المستخدم: ${user}`;
             waBtn.href = `https://wa.me/972555630038?text=${encodeURIComponent(message)}`;
             
             toast.style.display = 'block';
-            
-            // إرسال الطلب للسيرفر
-            fetch(`${url}?action=addOrder&user=${encodeURIComponent(user)}&service=${encodeURIComponent(actionType)}&link=Internal&qty=0`);
-            
-            // إخفاء بعد 12 ثانية
-            setTimeout(() => { toast.style.display = 'none'; }, 12000);
-        }
 
-        async function fetchBalance() {
-            try {
-                const response = await fetch(url + "?action=getBalances");
-                const data = await response.json();
-                if(data[user]) {
-                    document.getElementById('b').innerText = "$" + parseFloat(data[user].balance || 0).toFixed(4);
-                }
-            } catch(e) { document.getElementById('b').innerText = "$0.0000"; }
+            // تسجيل الطلب في الفايربيز كـ إشعار للإدارة
+            const orderId = Date.now();
+            database.ref('admin_notifications/' + orderId).set({
+                user: user,
+                type: actionType,
+                time: new Date().toLocaleString(),
+                status: "قيد الانتظار"
+            });
+            
+            setTimeout(() => { toast.style.display = 'none'; }, 12000);
         }
 
         function logout() {
@@ -253,8 +271,9 @@
             localStorage.setItem('chosenService', serviceName);
             window.location.href = "order.html";
         }
-        fetchBalance();
-        setInterval(fetchBalance, 60000);
+
+        // تشغيل المراقبة فور فتح الصفحة
+        watchBalance();
     </script>
 </body>
 </html>
