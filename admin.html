@@ -30,7 +30,20 @@
             line-height: 1.6;
         }
 
-        /* شاشة الدخول */
+        /* --- إضافة قصي: رسالة النجاح في نص الشاشة --- */
+        #custom-alert {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: #00b894; color: white; padding: 20px 40px; border-radius: 25px;
+            font-weight: 900; font-size: 20px; z-index: 20000; display: none;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2); text-align: center;
+            animation: popUp 0.3s ease-out;
+        }
+        @keyframes popUp {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        /* -------------------------------------- */
+
         #admin-login {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg); z-index: 10000; display: flex;
@@ -83,7 +96,6 @@
         .btn-del { background: #fff1f0; color: var(--danger); }
         .btn-logout { background: var(--white); color: var(--danger); border: 1px solid #ffeaea; }
 
-        /* سجل الدخول */
         .log-item { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; }
         .log-item:last-child { border-bottom: none; }
         .log-user { font-weight: bold; color: var(--primary); }
@@ -93,6 +105,8 @@
     </style>
 </head>
 <body>
+
+<div id="custom-alert">✅ تم التحديث بنجاح</div>
 
 <div id="admin-login">
     <div class="login-box">
@@ -126,8 +140,7 @@
                 <h3 style="color: var(--primary);">🕒 سجل دخول آخر 24 ساعة</h3>
                 <button class="btn btn-del" onclick="clearLoginLogs()">مسح السجل</button>
             </div>
-            <div id="login-logs-list">
-                </div>
+            <div id="login-logs-list"></div>
         </div>
     </div>
 
@@ -164,6 +177,13 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    // دالة قصي لإظهار رسالة النجاح
+    function msgDone() {
+        const box = document.getElementById('custom-alert');
+        box.style.display = 'block';
+        setTimeout(() => { box.style.display = 'none'; }, 1500);
+    }
+
     function checkAdmin() {
         const pass = document.getElementById('adminPass').value;
         if(pass === '0598787757') {
@@ -198,12 +218,7 @@
                 const arr = Object.values(logs).reverse();
                 arr.forEach(log => {
                     const date = new Date(log.timestamp).toLocaleString('ar-EG');
-                    html += `
-                        <div class="log-item">
-                            <span class="log-user">👤 ${log.user}</span>
-                            <span class="log-time">${date}</span>
-                        </div>
-                    `;
+                    html += `<div class="log-item"><span class="log-user">👤 ${log.user}</span><span class="log-time">${date}</span></div>`;
                 });
             }
             document.getElementById('login-logs-list').innerHTML = html;
@@ -213,17 +228,11 @@
     function cleanOldLogs() {
         const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
         db.ref('login_logs').orderByChild('timestamp').endAt(oneDayAgo).once('value', (snap) => {
-            snap.forEach((child) => {
-                child.ref.remove();
-            });
+            snap.forEach((child) => { child.ref.remove(); });
         });
     }
 
-    function clearLoginLogs() {
-        if(confirm("مسح كل سجل الدخول؟")) {
-            db.ref('login_logs').remove();
-        }
-    }
+    function clearLoginLogs() { if(confirm("مسح كل سجل الدخول؟")) { db.ref('login_logs').remove(); } }
 
     function startLiveUpdate() {
         db.ref('users').on('value', (userSnap) => {
@@ -231,20 +240,14 @@
                 const users = userSnap.val();
                 const statuses = statusSnap.val() || {};
                 let html = "";
-                
                 for(let u in users) {
                     const isBanned = users[u].status === 'محظور';
                     const userStatus = statuses[u] ? statuses[u].state : 'offline';
                     const statusClass = userStatus === 'online' ? 'online' : 'offline';
-                    
                     html += `
                     <div class="card">
                         <div class="flex-row">
-                            <span class="user-tag">
-                                <span class="status-dot ${statusClass}"></span>
-                                👤 ${u} 
-                                <small style="font-size:10px; color:#aaa;">(${userStatus})</small>
-                            </span>
+                            <span class="user-tag"><span class="status-dot ${statusClass}"></span> 👤 ${u} <small style="font-size:10px; color:#aaa;">(${userStatus})</small></span>
                             <select onchange="updateUserField('${u}', 'status', this.value)" style="border-color: ${isBanned ? 'var(--danger)' : 'var(--secondary)'}">
                                 <option value="نشط" ${!isBanned ? 'selected' : ''}>✅ نشط</option>
                                 <option value="محظور" ${isBanned ? 'selected' : ''}>🚫 حظر</option>
@@ -271,10 +274,7 @@
             let html = arr.map(o => `
                 <div class="card">
                     <div class="flex-row"><b>${o.service}</b> <small>${o.date}</small></div>
-                    <div style="font-size:14px; margin:10px 0; background:#f9f9fc; padding:10px; border-radius:10px;">
-                        يوزر: ${o.user} | كمية: ${o.qty} <br>
-                        رابط: <a href="${o.link}" target="_blank">فتح الرابط</a>
-                    </div>
+                    <div style="font-size:14px; margin:10px 0; background:#f9f9fc; padding:10px; border-radius:10px;">يوزر: ${o.user} | كمية: ${o.qty} <br>رابط: <a href="${o.link}" target="_blank">فتح الرابط</a></div>
                     <div class="flex-row">
                         <select id="st_${o.orderId}" style="flex:1">
                             <option value="قيد التنفيذ" ${o.status === 'قيد التنفيذ' ? 'selected' : ''}>⏳ قيد التنفيذ</option>
@@ -283,8 +283,7 @@
                         </select>
                         <button class="btn btn-save" onclick="updateOrderStatus('${o.user}', '${o.orderId}')">تحديث</button>
                     </div>
-                </div>
-            `).join('');
+                </div>`).join('');
             document.getElementById('orders-list').innerHTML = html;
         });
     }
@@ -302,34 +301,23 @@
         const t = document.getElementById('ticker-text-input').value;
         const s = document.getElementById('ticker-speed-input').value;
         if(t && s) {
-            db.ref('settings/ticker').set({ text: t, speed: s })
-            .then(() => alert("✅ تم تحديث الشريط بنجاح!"));
+            db.ref('settings/ticker').set({ text: t, speed: s }).then(() => msgDone());
         } else { alert("عبّي البيانات يا قصي!"); }
     }
 
     function saveUserData(u) {
         const b = parseFloat(document.getElementById('bal_'+u).value);
         const p = document.getElementById('pass_'+u).value;
-        // التعديل هنا: ننتظر نجاح التحديث قبل إظهار التنبيه لضمان العمل على الموبايل
-        db.ref('users/' + u).update({ balance: b, password: p }).then(() => {
-            alert("تم حفظ " + u);
-        }).catch(err => alert("حدث خطأ في الموبايل: " + err.message));
+        db.ref('users/' + u).update({ balance: b, password: p }).then(() => msgDone());
     }
 
-    function updateUserField(u, field, val) { db.ref('users/' + u).update({ [field]: val }); }
-    
+    function updateUserField(u, field, val) { db.ref('users/' + u).update({ [field]: val }).then(() => msgDone()); }
     function deleteAccount(u) { if(confirm("أكيد بدك تمسح " + u + "؟")) db.ref('users/' + u).remove(); }
     
     function updateOrderStatus(u, id) {
         const s = document.getElementById('st_' + id).value;
-        const updates = {};
-        updates['orders/' + id + '/status'] = s;
-        updates['user_orders/' + u + '/' + id + '/status'] = s;
-
-        // التعديل الجوهري هنا: دمج التحديثين في أمر واحد لضمان السرعة عالفون
-        db.ref().update(updates).then(() => {
-            alert("تم تحديث حالة الطلب");
-        }).catch(err => alert("خطأ في التحديث: " + err.message));
+        db.ref('orders/' + id).update({status: s});
+        db.ref('user_orders/' + u + '/' + id).update({status: s}).then(() => msgDone());
     }
 
     function clearOrders() { if(confirm("مسح كل السجل؟")) { db.ref('orders').remove(); db.ref('user_orders').remove(); } }
