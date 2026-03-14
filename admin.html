@@ -30,13 +30,25 @@
             line-height: 1.6;
         }
 
-        /* --- تصميم الـ Pop-up الجديد --- */
+        /* --- التعديل المطلوب: تثبيت الرسالة بنص الشاشة تماماً --- */
         #custom-alert {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: var(--secondary); color: white; padding: 20px 40px; border-radius: 25px;
-            font-weight: 900; font-size: 20px; z-index: 30000; display: none;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.2); text-align: center;
-            animation: popUp 0.3s ease-out;
+            position: fixed; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); /* السنترة الحقيقية */
+            background: var(--secondary); 
+            color: white; 
+            padding: 20px 40px; 
+            border-radius: 50px;
+            font-weight: 900; 
+            font-size: 20px; 
+            z-index: 99999; 
+            display: none;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2); 
+            text-align: center;
+            min-width: 250px;
+            pointer-events: none;
+            animation: popUp 0.3s ease-out forwards;
         }
 
         #custom-confirm {
@@ -53,9 +65,10 @@
         .confirm-btns { display: flex; gap: 15px; }
         .confirm-btns button { flex: 1; padding: 15px; border-radius: 15px; border: none; font-family: 'Tajawal'; font-weight: bold; cursor: pointer; }
         
+        /* تعديل الحركة لتناسب السنترة */
         @keyframes popUp {
-            0% { transform: scale(0.7); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
+            0% { transform: translate(-50%, -50%) scale(0.7); opacity: 0; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
         }
         /* ------------------------------- */
 
@@ -136,7 +149,7 @@
 <div id="admin-login">
     <div class="login-box">
         <i class="fas fa-user-shield"></i>
-        <h2>غرفة العمليات</h2>
+        <h2>غرفه المطنوخ الكبير</h2>
         <input type="password" id="adminPass" placeholder="رمز الدخول الخاص">
         <button class="btn-login" onclick="checkAdmin()">دخول النظام</button>
     </div>
