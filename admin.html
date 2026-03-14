@@ -30,18 +30,34 @@
             line-height: 1.6;
         }
 
-        /* رسالة النجاح Pop-up */
+        /* --- تصميم الـ Pop-up الجديد --- */
         #custom-alert {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: var(--secondary); color: white; padding: 20px 40px; border-radius: 25px;
-            font-weight: 900; font-size: 20px; z-index: 20000; display: none;
+            font-weight: 900; font-size: 20px; z-index: 30000; display: none;
             box-shadow: 0 15px 40px rgba(0,0,0,0.2); text-align: center;
             animation: popUp 0.3s ease-out;
         }
-        @keyframes popUp {
-            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
-            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+
+        #custom-confirm {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); z-index: 25000; display: none;
+            align-items: center; justify-content: center; backdrop-filter: blur(5px);
         }
+        .confirm-box {
+            background: white; padding: 30px; border-radius: 35px; width: 85%; max-width: 380px;
+            text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: popUp 0.3s ease-out;
+        }
+        .confirm-box h3 { margin-bottom: 25px; font-weight: 900; color: var(--text); }
+        .confirm-btns { display: flex; gap: 15px; }
+        .confirm-btns button { flex: 1; padding: 15px; border-radius: 15px; border: none; font-family: 'Tajawal'; font-weight: bold; cursor: pointer; }
+        
+        @keyframes popUp {
+            0% { transform: scale(0.7); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        /* ------------------------------- */
 
         #admin-login {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -107,11 +123,21 @@
 
 <div id="custom-alert">✅ تم بنجاح</div>
 
+<div id="custom-confirm">
+    <div class="confirm-box">
+        <h3 id="confirm-msg">هل أنت متأكد؟</h3>
+        <div class="confirm-btns">
+            <button style="background: var(--danger); color: white;" id="confirm-yes">نعم، متأكد</button>
+            <button style="background: #eee; color: var(--text);" onclick="closeConfirm()">إلغاء</button>
+        </div>
+    </div>
+</div>
+
 <div id="admin-login">
     <div class="login-box">
         <i class="fas fa-user-shield"></i>
-        <h2>لوحه المدير</h2>
-        <input type="password" id="adminPass" placeholder="كلمه سر مدير الموقع">
+        <h2>غرفة العمليات</h2>
+        <input type="password" id="adminPass" placeholder="رمز الدخول الخاص">
         <button class="btn-login" onclick="checkAdmin()">دخول النظام</button>
     </div>
 </div>
@@ -137,7 +163,7 @@
         <div class="card">
             <div class="flex-row" style="margin-bottom: 20px;">
                 <h3 style="color: var(--primary);">🕒 سجل دخول آخر 24 ساعة</h3>
-                <button class="btn btn-del" onclick="clearLoginLogs()">مسح السجل</button>
+                <button class="btn btn-del" onclick="askConfirm('هل تريد مسح سجل الدخول؟', clearLoginLogs)">مسح السجل</button>
             </div>
             <div id="login-logs-list"></div>
         </div>
@@ -155,7 +181,7 @@
     </div>
 
     <div id="orders-tab" class="content-section">
-        <button onclick="clearOrders()" class="btn btn-del" style="width:100%; margin-bottom:25px; padding:18px; border-radius: 20px; font-weight: 900;">
+        <button onclick="askConfirm('هل تريد مسح سجل الطلبات بالكامل؟', clearOrders)" class="btn btn-del" style="width:100%; margin-bottom:25px; padding:18px; border-radius: 20px; font-weight: 900;">
             <i class="fas fa-trash-alt"></i> مسح سجل الطلبات بالكامل
         </button>
         <div id="orders-list"></div>
@@ -176,13 +202,32 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // دالة قصي المطورة لإظهار رسالة النجاح
-    function msgDone(txt = "تم بنجاح") {
-        const box = document.getElementById('custom-alert');
-        box.innerHTML = `✅ ${txt}`;
-        box.style.display = 'block';
-        setTimeout(() => { box.style.display = 'none'; }, 1500);
+    // --- نظام البوب اب البديل ---
+    let actionToExecute = null;
+
+    function showToast(msg) {
+        const toast = document.getElementById('custom-alert');
+        toast.innerText = msg;
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 1500);
     }
+
+    function askConfirm(msg, action) {
+        document.getElementById('confirm-msg').innerText = msg;
+        document.getElementById('custom-confirm').style.display = 'flex';
+        actionToExecute = action;
+    }
+
+    function closeConfirm() {
+        document.getElementById('custom-confirm').style.display = 'none';
+        actionToExecute = null;
+    }
+
+    document.getElementById('confirm-yes').onclick = function() {
+        if(actionToExecute) actionToExecute();
+        closeConfirm();
+    }
+    // ----------------------------
 
     function checkAdmin() {
         const pass = document.getElementById('adminPass').value;
@@ -194,7 +239,9 @@
             loadTickerData();
             cleanOldLogs();
             listenToLogs();
-        } else { alert("الرمز غلط يا غالي"); }
+        } else { 
+            showToast("❌ الرمز غلط يا غالي");
+        }
     }
 
     function adminLogout() { sessionStorage.clear(); location.reload(); }
@@ -232,11 +279,8 @@
         });
     }
 
-    // تعديل المسح لسجل الدخول
-    function clearLoginLogs() { 
-        if(confirm("مسح كل سجل الدخول؟")) { 
-            db.ref('login_logs').remove().then(() => msgDone("تم مسح السجل")); 
-        } 
+    function clearLoginLogs() {
+        db.ref('login_logs').remove().then(() => showToast("✅ تم مسح السجل بنجاح"));
     }
 
     function startLiveUpdate() {
@@ -263,7 +307,7 @@
                             <span>🔑 سر: <input type="text" id="pass_${u}" value="${users[u].password}" style="width:100px"></span>
                             <div style="display:flex; gap:8px">
                                 <button class="btn btn-save" onclick="saveUserData('${u}')">حفظ</button>
-                                <button class="btn btn-del" onclick="deleteAccount('${u}')"><i class="fas fa-trash"></i></button>
+                                <button class="btn btn-del" onclick="askConfirm('هل تريد حذف حساب ${u}؟', () => deleteAccount('${u}'))"><i class="fas fa-trash"></i></button>
                             </div>
                         </div>
                     </div>`;
@@ -306,38 +350,33 @@
         const t = document.getElementById('ticker-text-input').value;
         const s = document.getElementById('ticker-speed-input').value;
         if(t && s) {
-            db.ref('settings/ticker').set({ text: t, speed: s }).then(() => msgDone("تم تحديث الشريط"));
-        } else { alert("عبّي البيانات يا قصي!"); }
+            db.ref('settings/ticker').set({ text: t, speed: s }).then(() => showToast("✅ تم تحديث الشريط بنجاح!"));
+        } else { showToast("⚠️ عبّي البيانات يا قصي!"); }
     }
 
     function saveUserData(u) {
         const b = parseFloat(document.getElementById('bal_'+u).value);
         const p = document.getElementById('pass_'+u).value;
-        db.ref('users/' + u).update({ balance: b, password: p }).then(() => msgDone(`تم حفظ ${u}`));
+        db.ref('users/' + u).update({ balance: b, password: p }).then(() => showToast("✅ تم حفظ بيانات " + u));
     }
 
     function updateUserField(u, field, val) { 
-        db.ref('users/' + u).update({ [field]: val }).then(() => msgDone("تم تغيير الحالة")); 
+        db.ref('users/' + u).update({ [field]: val }).then(() => showToast("✅ تم تغيير الحالة")); 
     }
-    
+
     function deleteAccount(u) { 
-        if(confirm("أكيد بدك تمسح " + u + "؟")) {
-            db.ref('users/' + u).remove().then(() => msgDone("تم حذف الحساب"));
-        }
+        db.ref('users/' + u).remove().then(() => showToast("🗑️ تم حذف الحساب بنجاح")); 
     }
-    
+
     function updateOrderStatus(u, id) {
         const s = document.getElementById('st_' + id).value;
         db.ref('orders/' + id).update({status: s});
-        db.ref('user_orders/' + u + '/' + id).update({status: s}).then(() => msgDone("تم تحديث الطلب"));
+        db.ref('user_orders/' + u + '/' + id).update({status: s}).then(() => showToast("✅ تم تحديث حالة الطلب"));
     }
 
-    // تعديل المسح للطلبات
-    function clearOrders() { 
-        if(confirm("مسح كل سجل الطلبات؟")) { 
-            db.ref('orders').remove(); 
-            db.ref('user_orders').remove().then(() => msgDone("تم تصفير الطلبات")); 
-        } 
+    function clearOrders() {
+        db.ref('orders').remove();
+        db.ref('user_orders').remove().then(() => showToast("✅ تم مسح السجل بالكامل"));
     }
 </script>
 </body>
